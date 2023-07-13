@@ -37,11 +37,12 @@ func (ac *AuthController) SignUpUser(ctx *gin.Context) {
 		return
 	}
 
+
 	now := time.Now()
 	newUser := models.User{
 		Username:      payload.Username,
 		Password:  hashedPassword,
-		Role:      "admin",
+		RoleID:      payload.RoleID,
 		Verified:  true,
 		CreatedAt: now,
 		UpdatedAt: now,
@@ -60,7 +61,7 @@ func (ac *AuthController) SignUpUser(ctx *gin.Context) {
 	userResponse := &models.UserResponse{
 		ID:        newUser.ID,
 		Username:      newUser.Username,
-		Role:      newUser.Role,
+		RoleID:      newUser.RoleID,
 		CreatedAt: newUser.CreatedAt,
 		UpdatedAt: newUser.UpdatedAt,
 	}

@@ -19,6 +19,9 @@ var (
 
 	UserController      controllers.UserController
 	UserRouteController routes.UserRouteController
+
+	RoleController      controllers.RoleController
+	RoleRouteController routes.RoleRouteController
 )
 
 func init() {
@@ -34,6 +37,9 @@ func init() {
 
 	UserController = controllers.NewUserController(initializers.DB)
 	UserRouteController = routes.NewRouteUserController(UserController)
+
+	RoleController = controllers.NewRoleController(initializers.DB)
+	RoleRouteController = routes.NewRoleRouteController(RoleController)
 
 	server = gin.Default()
 }
@@ -58,6 +64,8 @@ func main() {
 
 	AuthRouteController.AuthRoute(router)
 	UserRouteController.UserRoute(router)
+	RoleRouteController.RoleRoute(router)
+	
 	log.Fatal(server.Run(":" + config.ServerPort))
 }
 

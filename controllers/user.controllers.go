@@ -23,7 +23,7 @@ func (uc *UserController) GetMe(ctx *gin.Context) {
 	userResponse := &models.UserResponse{
 		ID:        currentUser.ID,
 		Username:      currentUser.Username,
-		Role:      currentUser.Role,
+		RoleID:      currentUser.RoleID,
 		CreatedAt: currentUser.CreatedAt,
 		UpdatedAt: currentUser.UpdatedAt,
 	}

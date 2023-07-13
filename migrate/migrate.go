@@ -20,8 +20,9 @@ func init() {
 
 func main() {
 	
+	
+
 	initializers.DB.AutoMigrate(&models.Role{})
-	initializers.DB.Migrator().CreateConstraint(&models.User{}, "Role")
 	initializers.DB.AutoMigrate(&models.User{})
 
 	
