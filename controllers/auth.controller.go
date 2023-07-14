@@ -43,7 +43,7 @@ func (ac *AuthController) SignUpUser(ctx *gin.Context) {
 		Username:      payload.Username,
 		Password:  hashedPassword,
 		RoleID:      payload.RoleID,
-		Verified:  true,
+		
 		CreatedAt: now,
 		UpdatedAt: now,
 	}

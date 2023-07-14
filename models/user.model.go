@@ -11,7 +11,7 @@ type User struct {
 	Username  string    `gorm:"type:varchar(255);not null"`
 	Password  string    `gorm:"not null"`
 	RoleID  uint32    `gorm:"not null;references:ID"`
-	Verified  bool      `gorm:"not null"`
+	
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	Role 	Role `gorm:"foreignKey:RoleID"`
