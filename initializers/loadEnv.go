@@ -1,9 +1,12 @@
 package initializers
 
 import (
+	"log"
+	"os"
 	"time"
 
-	"github.com/spf13/viper"
+	// go dotenv
+	"github.com/joho/godotenv"
 )
 
 type Config struct {
@@ -13,7 +16,7 @@ type Config struct {
 	DBName         string `mapstructure:"POSTGRES_DB"`
 	DBPort         string `mapstructure:"POSTGRES_PORT"`
 	ServerPort     string `mapstructure:"PORT"`
-	DBSchema       string `mapstructure:"POSTGRES_SCHEMA"`
+
 
 	ClientOrigin string `mapstructure:"CLIENT_ORIGIN"`
 
@@ -28,18 +31,34 @@ type Config struct {
 }
 
 func LoadConfig(path string) (config Config, err error) {
-	viper.AddConfigPath(path)
-	viper.SetConfigType("env")
-	viper.SetConfigName("app")
+  error := godotenv.Load()
+  if error != nil {
+    log.Fatal("Error loading .env file")
+  }
 
-	viper.AutomaticEnv()
+  config = Config{
+	DBHost:         os.Getenv("POSTGRES_HOST"),
+	DBUserName:     os.Getenv("POSTGRES_USER"),
+	DBUserPassword: os.Getenv("POSTGRES_PASSWORD"),
+	DBName:         os.Getenv("POSTGRES_DB"),
+	DBPort:         os.Getenv("POSTGRES_PORT"),
+	ServerPort:     os.Getenv("PORT"),
 
-	err = viper.ReadInConfig()
-	if err != nil {
-		return
-	}
+	ClientOrigin: os.Getenv("CLIENT_ORIGIN"),
 
-	err = viper.Unmarshal(&config)
-	return
+	AccessTokenPrivateKey: os.Getenv("ACCESS_TOKEN_PRIVATE_KEY"),
+	AccessTokenPublicKey:  os.Getenv("ACCESS_TOKEN_PUBLIC_KEY"),
+
+	RefreshTokenPrivateKey: os.Getenv("REFRESH_TOKEN_PRIVATE_KEY"),
+	RefreshTokenPublicKey:  os.Getenv("REFRESH_TOKEN_PUBLIC_KEY"),
+
+	AccessTokenExpiresIn: (time.Duration(15) * time.Minute),
+	RefreshTokenExpiresIn: (time.Duration(60) * time.Minute),
+
+	AccessTokenMaxAge: 15 ,
+	RefreshTokenMaxAge: 60,
+  }
+
+  return config, nil
 }
 

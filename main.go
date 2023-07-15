@@ -22,6 +22,9 @@ var (
 
 	RoleController      controllers.RoleController
 	RoleRouteController routes.RoleRouteController
+
+	TourismController      controllers.TourismController
+	TourismRouteController routes.TourismRouteController
 )
 
 func init() {
@@ -40,6 +43,9 @@ func init() {
 
 	RoleController = controllers.NewRoleController(initializers.DB)
 	RoleRouteController = routes.NewRoleRouteController(RoleController)
+
+	TourismController = controllers.NewTourismController(initializers.DB)
+	TourismRouteController = routes.NewTourismRouteController(TourismController)
 
 	server = gin.Default()
 }
@@ -65,6 +71,8 @@ func main() {
 	AuthRouteController.AuthRoute(router)
 	UserRouteController.UserRoute(router)
 	RoleRouteController.RoleRoute(router)
+	TourismRouteController.TourismRoute(router)
+
 	
 	log.Fatal(server.Run(":" + config.ServerPort))
 }

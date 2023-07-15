@@ -24,6 +24,8 @@ func main() {
 
 	initializers.DB.AutoMigrate(&models.Role{})
 	initializers.DB.AutoMigrate(&models.User{})
+	initializers.DB.AutoMigrate(&models.Tourism{})
+	initializers.DB.AutoMigrate(&models.TourismPicture{})
 
 	
 	fmt.Println("? Migration complete")

@@ -17,4 +17,7 @@
 TODO.md
 logs.txt
 .idea/
-secret.md
+.env
+.dockerignore
+fly.toml
+```

@@ -93,13 +93,13 @@ func (ac *AuthController) SignInUser(ctx *gin.Context) {
 	config, _ := initializers.LoadConfig(".")
 
 	// Generate Tokens
-	access_token, err := utils.CreateToken(config.AccessTokenExpiresIn, user.ID, config.AccessTokenPrivateKey)
+	access_token, err := utils.CreateToken(config.AccessTokenExpiresIn, user.ID, user.Username, user.RoleID, config.AccessTokenPrivateKey)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
 		return
 	}
 
-	refresh_token, err := utils.CreateToken(config.RefreshTokenExpiresIn, user.ID, config.RefreshTokenPrivateKey)
+	refresh_token, err := utils.CreateToken(config.RefreshTokenExpiresIn,user.ID ,user.Username,user.RoleID , config.RefreshTokenPrivateKey)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
 		return
@@ -138,7 +138,7 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 		return
 	}
 
-	access_token, err := utils.CreateToken(config.AccessTokenExpiresIn, user.ID, config.AccessTokenPrivateKey)
+	access_token, err := utils.CreateToken(config.AccessTokenExpiresIn,user.ID, user.Username, user.RoleID, config.AccessTokenPrivateKey)
 	if err != nil {
 		ctx.AbortWithStatusJSON(http.StatusForbidden, gin.H{"status": "fail", "message": err.Error()})
 		return
