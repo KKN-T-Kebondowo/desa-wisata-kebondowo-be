@@ -16,15 +16,11 @@ func init() {
 	initializers.ConnectDB(&config)
 }
 
-
-
 func main() {
-	
-	
 
 	initializers.DB.AutoMigrate(&models.Role{})
 	initializers.DB.AutoMigrate(&models.User{})
+	initializers.DB.AutoMigrate(&models.Gallery{})
 
-	
 	fmt.Println("? Migration complete")
 }
