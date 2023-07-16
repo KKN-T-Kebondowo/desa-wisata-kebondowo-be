@@ -3,6 +3,7 @@ package initializers
 import (
 	"log"
 	"os"
+	"strconv"
 	"time"
 
 	// go dotenv
@@ -17,7 +18,6 @@ type Config struct {
 	DBPort         string `mapstructure:"POSTGRES_PORT"`
 	ServerPort     string `mapstructure:"PORT"`
 
-
 	ClientOrigin string `mapstructure:"CLIENT_ORIGIN"`
 
 	AccessTokenPrivateKey  string        `mapstructure:"ACCESS_TOKEN_PRIVATE_KEY"`
@@ -31,34 +31,36 @@ type Config struct {
 }
 
 func LoadConfig(path string) (config Config, err error) {
-  error := godotenv.Load()
-  if error != nil {
-    log.Fatal("Error loading .env file")
-  }
+	error := godotenv.Load()
+	if error != nil {
+		log.Fatal("Error loading .env file")
+	}
 
-  config = Config{
-	DBHost:         os.Getenv("POSTGRES_HOST"),
-	DBUserName:     os.Getenv("POSTGRES_USER"),
-	DBUserPassword: os.Getenv("POSTGRES_PASSWORD"),
-	DBName:         os.Getenv("POSTGRES_DB"),
-	DBPort:         os.Getenv("POSTGRES_PORT"),
-	ServerPort:     os.Getenv("PORT"),
+	accessTokenExpInHours, _ := strconv.Atoi(os.Getenv("ACCESS_TOKEN_EXPIRED_IN_HOURS"))
+	refreshTokenExpInDays, _ := strconv.Atoi(os.Getenv("REFRESH_TOKEN_EXPIRED_IN_DAYS"))
 
-	ClientOrigin: os.Getenv("CLIENT_ORIGIN"),
+	config = Config{
+		DBHost:         os.Getenv("POSTGRES_HOST"),
+		DBUserName:     os.Getenv("POSTGRES_USER"),
+		DBUserPassword: os.Getenv("POSTGRES_PASSWORD"),
+		DBName:         os.Getenv("POSTGRES_DB"),
+		DBPort:         os.Getenv("POSTGRES_PORT"),
+		ServerPort:     os.Getenv("PORT"),
 
-	AccessTokenPrivateKey: os.Getenv("ACCESS_TOKEN_PRIVATE_KEY"),
-	AccessTokenPublicKey:  os.Getenv("ACCESS_TOKEN_PUBLIC_KEY"),
+		ClientOrigin: os.Getenv("CLIENT_ORIGIN"),
 
-	RefreshTokenPrivateKey: os.Getenv("REFRESH_TOKEN_PRIVATE_KEY"),
-	RefreshTokenPublicKey:  os.Getenv("REFRESH_TOKEN_PUBLIC_KEY"),
+		AccessTokenPrivateKey: os.Getenv("ACCESS_TOKEN_PRIVATE_KEY"),
+		AccessTokenPublicKey:  os.Getenv("ACCESS_TOKEN_PUBLIC_KEY"),
 
-	AccessTokenExpiresIn: (time.Duration(15) * time.Minute),
-	RefreshTokenExpiresIn: (time.Duration(60) * time.Minute),
+		RefreshTokenPrivateKey: os.Getenv("REFRESH_TOKEN_PRIVATE_KEY"),
+		RefreshTokenPublicKey:  os.Getenv("REFRESH_TOKEN_PUBLIC_KEY"),
 
-	AccessTokenMaxAge: 15 ,
-	RefreshTokenMaxAge: 60,
-  }
+		AccessTokenExpiresIn:  time.Duration(accessTokenExpInHours) * time.Hour,
+		RefreshTokenExpiresIn: time.Duration(refreshTokenExpInDays) * 24 * time.Hour,
 
-  return config, nil
+		AccessTokenMaxAge:  accessTokenExpInHours,
+		RefreshTokenMaxAge: refreshTokenExpInDays,
+	}
+
+	return config, nil
 }
-
