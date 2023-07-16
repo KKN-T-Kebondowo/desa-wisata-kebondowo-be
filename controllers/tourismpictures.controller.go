@@ -56,8 +56,6 @@ func (tpc *TourismPictureController) Create(ctx *gin.Context) {
 	tourismPicture := models.TourismPicture{
 		TourismID: payload.TourismID,
 		PictureUrl: payload.PictureUrl,
-		Latitude: payload.Latitude,
-		Longitude: payload.Longitude,
 		
 	}
 

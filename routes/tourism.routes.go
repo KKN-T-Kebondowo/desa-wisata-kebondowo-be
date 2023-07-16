@@ -21,6 +21,6 @@ func (tc *TourismRouteController) TourismRoute(rg *gin.RouterGroup) {
 	router.GET("/", middleware.DeserializeUser(), tc.tourismController.GetAll)
 	router.GET("/:id", middleware.DeserializeUser(), tc.tourismController.GetOne)
 	router.POST("/", tc.tourismController.Create)
-	// router.PUT("/:id", middleware.DeserializeUser(), tc.tourismController.Update)
-	// router.DELETE("/:id", middleware.DeserializeUser(), tc.tourismController.Delete)
+	router.PUT("/:id", middleware.DeserializeUser(), tc.tourismController.Update)
+	router.DELETE("/:id", middleware.DeserializeUser(), tc.tourismController.Delete)
 }

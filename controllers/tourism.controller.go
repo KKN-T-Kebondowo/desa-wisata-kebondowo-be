@@ -62,6 +62,8 @@ func (tc *TourismController) Create(ctx *gin.Context) {
 		Title: payload.Title,
 		Description: payload.Description,
 		Slug : payload.Slug,
+		Latitude : payload.Latitude,
+		Longitude : payload.Longitude,
 		CoverPictureUrl: payload.CoverPictureUrl,
 	}
 
@@ -72,23 +74,22 @@ func (tc *TourismController) Create(ctx *gin.Context) {
 		return
 	}
 
-	// make tourism picture with tourism id
-	// return tourism picture json response
-	tourismPicture := models.TourismPicture{
-		TourismID: newTourism.ID,
-		PictureUrl: "nyoba",
-		Latitude: 7.1,
-		Longitude: 7.2,
+	// look for payload, if payload exist, loop through array, then create new tourismpicture
+	// if payload not exist, return newTourism
+	if payload.Pictures != nil {
+		for _, picture := range payload.Pictures {
+			tourismPicture := models.TourismPicture{
+				PictureUrl : picture.PictureUrl,
+				TourismID : newTourism.ID,
+			}
+			tc.DB.Create(&tourismPicture)
+
+		}
+
+		
 	}
 
-	result2 := tc.DB.Create(&tourismPicture)
-	
 
-
-	if result2.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result2.Error.Error()})
-		return
-	}
 
 	response := &models.TourismResponse{
 		ID : newTourism.ID,
@@ -96,13 +97,98 @@ func (tc *TourismController) Create(ctx *gin.Context) {
 		Description : newTourism.Description,
 		Slug : newTourism.Slug,
 		CoverPictureUrl : newTourism.CoverPictureUrl,
-		Pictures : []models.TourismPicture{tourismPicture},
+		Latitude : newTourism.Latitude,
+		Longitude : newTourism.Longitude,
+		CreatedAt : newTourism.CreatedAt,
+		UpdatedAt : newTourism.UpdatedAt,
+		Pictures : []models.TourismPicture{},
 	}
 
 	
 
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"tourism": response}})
+}
+
+
+// Update tourism with tourismpicture
+// Return tourism with tourismpicture json response
+func (tc *TourismController) Update(ctx *gin.Context) {
+	var payload *models.TourismInput
+	var tourism models.Tourism
+
+	if err := ctx.ShouldBindJSON(&payload); err != nil {
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		return
+	}
+
+	result := tc.DB.Where("id = ?", ctx.Param("id")).First(&tourism)
+
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
+		return
+	}
+
+	tourism.Title = payload.Title
+	tourism.Description = payload.Description
+	tourism.Slug = payload.Slug
+	tourism.Latitude = payload.Latitude
+	tourism.Longitude = payload.Longitude
+	tourism.CoverPictureUrl = payload.CoverPictureUrl
+
+	result = tc.DB.Save(&tourism)
+
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
+		return
+	}
+
+
+	response := &models.TourismResponse{
+		ID : tourism.ID,
+		Title : tourism.Title,
+		Description : tourism.Description,
+		Slug : tourism.Slug,
+		CoverPictureUrl : tourism.CoverPictureUrl,
+		Latitude : tourism.Latitude,
+		Longitude : tourism.Longitude,
+		CreatedAt : tourism.CreatedAt,
+		UpdatedAt : tourism.UpdatedAt,
+		Pictures : []models.TourismPicture{},
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"tourism": response}})
+}
+
+// Delete tourism with tourismpicture
+// Return tourism with tourismpicture json response
+func (tc *TourismController) Delete(ctx *gin.Context) {
+	var tourism models.Tourism
+	var tourismpicture models.TourismPicture
+
+	result := tc.DB.Where("tourism_id = ?", ctx.Param("id")).Delete(&tourismpicture)
+
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
+		return
+	}
+	
+
+	result2 := tc.DB.Where("id = ?", ctx.Param("id")).First(&tourism)
+
+	if result2.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
+		return
+	}
+
+	result2 = tc.DB.Delete(&tourism)
+
+	if result2.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"tourism": tourism}})
 }
 
 

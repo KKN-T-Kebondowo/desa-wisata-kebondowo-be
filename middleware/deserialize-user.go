@@ -21,10 +21,11 @@ func DeserializeUser() gin.HandlerFunc {
 		authorizationHeader := ctx.Request.Header.Get("Authorization")
 		fields := strings.Fields(authorizationHeader)
 
+
 		if len(fields) != 0 && fields[0] == "Bearer" {
 			access_token = fields[1]
 		} else if err == nil {
-			access_token = cookie
+			access_token = cookie 	
 		}
 
 		if access_token == "" {
