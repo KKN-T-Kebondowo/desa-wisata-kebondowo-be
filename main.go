@@ -13,18 +13,17 @@ import (
 )
 
 var (
-	server              *gin.Engine
-	AuthController      controllers.AuthController
-	AuthRouteController routes.AuthRouteController
-
-	UserController      controllers.UserController
-	UserRouteController routes.UserRouteController
-
-	RoleController      controllers.RoleController
-	RoleRouteController routes.RoleRouteController
-
+	server                 *gin.Engine
+	AuthController         controllers.AuthController
+	AuthRouteController    routes.AuthRouteController
+	UserController         controllers.UserController
+	UserRouteController    routes.UserRouteController
+	RoleController         controllers.RoleController
+	RoleRouteController    routes.RoleRouteController
 	TourismController      controllers.TourismController
 	TourismRouteController routes.TourismRouteController
+	GalleryController      controllers.GalleryController
+	GalleryRouteController routes.GalleryRouteController
 )
 
 func init() {
@@ -47,6 +46,9 @@ func init() {
 	TourismController = controllers.NewTourismController(initializers.DB)
 	TourismRouteController = routes.NewTourismRouteController(TourismController)
 
+	GalleryController = controllers.NewGalleryController(initializers.DB)
+	GalleryRouteController = routes.NewGalleryRouteController(GalleryController)
+
 	server = gin.Default()
 }
 
@@ -57,7 +59,7 @@ func main() {
 	}
 
 	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowOrigins = []string{"http://localhost:8080", config.ClientOrigin}
+	corsConfig.AllowOrigins = []string{"http://localhost:3000"}
 	corsConfig.AllowCredentials = true
 
 	server.Use(cors.New(corsConfig))
@@ -72,8 +74,7 @@ func main() {
 	UserRouteController.UserRoute(router)
 	RoleRouteController.RoleRoute(router)
 	TourismRouteController.TourismRoute(router)
+	GalleryRouteController.GalleryRoute(router)
 
-	
 	log.Fatal(server.Run(":" + config.ServerPort))
 }
-
