@@ -69,3 +69,16 @@ func (tpc *TourismPictureController) Create(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"tourism_picture": tourismPicture}})
 }
 
+// delete
+func (tpc *TourismPictureController) Delete(ctx *gin.Context) {
+	var tourismPicture models.TourismPicture
+
+	result := tpc.DB.Where("id = ?", ctx.Param("id")).Delete(&tourismPicture)
+
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+}
