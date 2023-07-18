@@ -8,7 +8,6 @@ import (
 	"kebondowo/initializers"
 	"kebondowo/routes"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -58,11 +57,10 @@ func main() {
 		log.Fatal("? Could not load environment variables", err)
 	}
 
-	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowOrigins = []string{"http://localhost:3000"}
-	corsConfig.AllowCredentials = true
+	server := gin.Default()
 
-	server.Use(cors.New(corsConfig))
+	// Enable CORS
+	server.Use(CORS())
 
 	router := server.Group("/api")
 	router.GET("/healthchecker", func(ctx *gin.Context) {
@@ -77,4 +75,21 @@ func main() {
 	GalleryRouteController.GalleryRoute(router)
 
 	log.Fatal(server.Run(":" + config.ServerPort))
+}
+
+// CORS middleware
+func CORS() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3001")
+		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE")
+
+		if c.Request.Method == "OPTIONS" {
+			c.AbortWithStatus(http.StatusNoContent)
+			return
+		}
+
+		c.Next()
+	}
 }
