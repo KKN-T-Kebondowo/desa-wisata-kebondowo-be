@@ -8,6 +8,7 @@ import (
 	"kebondowo/initializers"
 	"kebondowo/routes"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -57,14 +58,22 @@ func main() {
 		log.Fatal("? Could not load environment variables", err)
 	}
 
+	corsConfig := cors.DefaultConfig()
+	corsConfig.AllowOrigins = []string{"http://localhost:3000"}
+	corsConfig.AllowCredentials = true
+	corsConfig.AllowHeaders = []string{"Authorization", "Content-Type"} // Add "Content-Type" to allowed headers
+
 	server := gin.Default()
+	server.Use(cors.New(corsConfig))
+
+	// server := gin.Default()
 
 	// Enable CORS
-	server.Use(CORS())
+	// server.Use(CORS())
 
 	router := server.Group("/api")
 	router.GET("/healthchecker", func(ctx *gin.Context) {
-		message := "Welcome to Golang with Gorm and Postgres"
+		message := "Welcome to Golang with Gorm and"
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": message})
 	})
 
@@ -74,22 +83,22 @@ func main() {
 	TourismRouteController.TourismRoute(router)
 	GalleryRouteController.GalleryRoute(router)
 
-	log.Fatal(server.Run(":" + config.ServerPort))
+	log.Fatal(server.Run("127.0.0.1:" + config.ServerPort))
 }
 
 // CORS middleware
-func CORS() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3001")
-		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
-		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE")
+// func CORS() gin.HandlerFunc {
+// 	return func(c *gin.Context) {
+// 		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
+// 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
+// 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
+// 		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE")
 
-		if c.Request.Method == "OPTIONS" {
-			c.AbortWithStatus(http.StatusNoContent)
-			return
-		}
+// 		if c.Request.Method == "OPTIONS" {
+// 			c.AbortWithStatus(http.StatusNoContent)
+// 			return
+// 		}
 
-		c.Next()
-	}
-}
+// 		c.Next()
+// 	}
+// }
