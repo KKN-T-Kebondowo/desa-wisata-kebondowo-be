@@ -4,25 +4,23 @@ import (
 	"time"
 )
 
-
 type Gallery struct {
-	ID   uint32 `gorm:"primary_key"`
-	PictureUrl string `gorm:"type:varchar(255);not null"`
-	Caption string `gorm:"type:varchar(255);not null"`
-	CreatedAt time.Time `gorm:"not null"`
-	UpdatedAt time.Time `gorm:"not null"`
+	ID         uint32    `gorm:"primary_key" json:"id"`
+	PictureUrl string    `gorm:"type:varchar(255);not null" json:"picture_url"`
+	Caption    string    `gorm:"type:varchar(255);not null" json:"caption"`
+	CreatedAt  time.Time `gorm:"not null" json:"created_at"`
+	UpdatedAt  time.Time `gorm:"not null" json:"updated_at"`
 }
 
 type GalleryInput struct {
 	PictureUrl string `json:"picture_url" binding:"required"`
-	Caption string `json:"caption" binding:"required"`
-
+	Caption    string `json:"caption" binding:"required"`
 }
 
 type GalleryResponse struct {
-	ID   uint32 `json:"id,omitempty"`
-	PictureUrl string `json:"picture_url,omitempty"`
-	Caption string `json:"caption,omitempty"`
-	CreatedAt time.Time `json:"created_at,omitempty"`
-	UpdatedAt time.Time `json:"updated_at,omitempty"`
+	ID         uint32    `json:"id,omitempty"`
+	PictureUrl string    `json:"picture_url,omitempty"`
+	Caption    string    `json:"caption,omitempty"`
+	CreatedAt  time.Time `json:"created_at,omitempty"`
+	UpdatedAt  time.Time `json:"updated_at,omitempty"`
 }
