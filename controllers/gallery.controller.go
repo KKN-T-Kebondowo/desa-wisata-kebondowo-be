@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
 	"kebondowo/models"
@@ -21,14 +22,57 @@ func NewGalleryController(DB *gorm.DB) GalleryController {
 func (gc *GalleryController) GetAll(ctx *gin.Context) {
 	var galleries []models.Gallery
 
-	result := gc.DB.Find(&galleries)
+	// Parse query parameters
+	limitStr := ctx.DefaultQuery("limit", "20")
+	offsetStr := ctx.DefaultQuery("offset", "0")
+	sortby := ctx.DefaultQuery("sortby", "created_at")
+	orderedby := ctx.DefaultQuery("orderedby", "desc")
+
+	// Convert limit and offset to integers
+	limit, err := strconv.Atoi(limitStr)
+	if err != nil {
+		// Handle error, invalid limit value
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Invalid limit value"})
+		return
+	}
+
+	offset, err := strconv.Atoi(offsetStr)
+	if err != nil {
+		// Handle error, invalid offset value
+		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Invalid offset value"})
+		return
+	}
+
+	// Query the database with the parsed parameters
+	result := gc.DB.
+		Order(sortby + " " + orderedby).
+		Limit(limit).
+		Offset(offset).
+		Find(&galleries)
 
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"galleries": galleries}})
+	// Get the total count of galleries
+	var total int64
+	gc.DB.Model(&models.Gallery{}).Count(&total)
+
+	// Create the meta object
+	meta := gin.H{
+		"limit":  limit,
+		"offset": offset,
+		"total":  total,
+	}
+
+	// Create the response payload
+	response := gin.H{
+		"galleries": galleries,
+		"meta":      meta,
+	}
+
+	ctx.JSON(http.StatusOK, response)
 }
 
 func (gc *GalleryController) GetOne(ctx *gin.Context) {
@@ -41,7 +85,7 @@ func (gc *GalleryController) GetOne(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"gallery": gallery}})
+	ctx.JSON(http.StatusOK, gin.H{"gallery": gallery})
 }
 
 func (gc *GalleryController) Create(ctx *gin.Context) {
