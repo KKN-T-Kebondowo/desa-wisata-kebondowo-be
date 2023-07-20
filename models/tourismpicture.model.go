@@ -11,3 +11,9 @@ type TourismPictureInput struct {
 	PictureUrl string `json:"picture_url" binding:"required"`
 	TourismID  uint32 `json:"tourism_id" binding:"required"`
 }
+
+type TourismPictureResponse struct {
+	ID         uint32 `json:"id,omitempty"`
+	PictureUrl string `json:"picture_url,omitempty"`
+	TourismID  uint32 `json:"tourism_id,omitempty"`
+}

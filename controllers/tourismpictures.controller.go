@@ -24,11 +24,11 @@ func (tpc *TourismPictureController) GetAll(ctx *gin.Context) {
 	result := tpc.DB.Find(&tourismPictures)
 
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"tourism_pictures": tourismPictures}})
+	ctx.JSON(http.StatusOK, gin.H{"tourism_pictures": tourismPictures})
 }
 
 func (tpc *TourismPictureController) GetOne(ctx *gin.Context) {
@@ -37,11 +37,11 @@ func (tpc *TourismPictureController) GetOne(ctx *gin.Context) {
 	result := tpc.DB.Where("id = ?", ctx.Param("id")).First(&tourismPicture)
 
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
+		ctx.JSON(http.StatusBadGateway, gin.H{ "message": result.Error.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"tourism_picture": tourismPicture}})
+	ctx.JSON(http.StatusOK, gin.H{"data": gin.H{"tourism_picture": tourismPicture}})
 }
 
 func (tpc *TourismPictureController) Create(ctx *gin.Context) {
@@ -49,7 +49,7 @@ func (tpc *TourismPictureController) Create(ctx *gin.Context) {
 
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
@@ -62,11 +62,11 @@ func (tpc *TourismPictureController) Create(ctx *gin.Context) {
 	result := tpc.DB.Create(&tourismPicture)
 
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"tourism_picture": tourismPicture}})
+	ctx.JSON(http.StatusOK,gin.H{"tourism_picture": tourismPicture})
 }
 
 // delete
@@ -76,7 +76,7 @@ func (tpc *TourismPictureController) Delete(ctx *gin.Context) {
 	result := tpc.DB.Where("id = ?", ctx.Param("id")).Delete(&tourismPicture)
 
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
 		return
 	}
 

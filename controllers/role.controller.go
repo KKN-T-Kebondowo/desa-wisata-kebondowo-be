@@ -23,11 +23,11 @@ func (rc *RoleController) GetAll(ctx *gin.Context) {
 	result := rc.DB.Find(&roles)
 
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"roles": roles}})
+	ctx.JSON(http.StatusOK, gin.H{"roles": roles})
 }
 
 func (rc *RoleController) GetOne(ctx *gin.Context) {
@@ -36,18 +36,18 @@ func (rc *RoleController) GetOne(ctx *gin.Context) {
 	result := rc.DB.Where("id = ?", ctx.Param("id")).First(&role)
 
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"role": role}})
+	ctx.JSON(http.StatusOK, gin.H{"role": role})
 }
 
 func (rc *RoleController) Create(ctx *gin.Context) {
 	var payload *models.RoleInput
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
@@ -58,11 +58,11 @@ func (rc *RoleController) Create(ctx *gin.Context) {
 	result := rc.DB.Create(&newRole)
 
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusCreated, gin.H{"status": "success", "data": gin.H{"role": newRole}})
+	ctx.JSON(http.StatusCreated, gin.H{"role": newRole})
 }
 
 // edit role
@@ -70,7 +70,7 @@ func (rc *RoleController) Update(ctx *gin.Context) {
 	var payload *models.RoleInput
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
@@ -79,7 +79,7 @@ func (rc *RoleController) Update(ctx *gin.Context) {
 	result := rc.DB.Where("id = ?", ctx.Param("id")).First(&role)
 
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
 		return
 	}
 
@@ -88,11 +88,11 @@ func (rc *RoleController) Update(ctx *gin.Context) {
 	result = rc.DB.Save(&role)
 
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"role": role}})
+	ctx.JSON(http.StatusOK, gin.H{"role": role})
 }
 
 // delete role
@@ -102,16 +102,16 @@ func (rc *RoleController) Delete(ctx *gin.Context){
 	result := rc.DB.Where("id = ?", ctx.Param("id")).First(&role)
 
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
 		return
 	}
 
 	result = rc.DB.Delete(&role)
 
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"role": role}})
+	ctx.JSON(http.StatusOK, gin.H{"role": role})
 }

@@ -32,14 +32,14 @@ func (gc *GalleryController) GetAll(ctx *gin.Context) {
 	limit, err := strconv.Atoi(limitStr)
 	if err != nil {
 		// Handle error, invalid limit value
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Invalid limit value"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Invalid limit value"})
 		return
 	}
 
 	offset, err := strconv.Atoi(offsetStr)
 	if err != nil {
 		// Handle error, invalid offset value
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "error", "message": "Invalid offset value"})
+		ctx.JSON(http.StatusBadRequest, gin.H{ "message": "Invalid offset value"})
 		return
 	}
 
@@ -51,7 +51,7 @@ func (gc *GalleryController) GetAll(ctx *gin.Context) {
 		Find(&galleries)
 
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
 		return
 	}
 
@@ -81,7 +81,7 @@ func (gc *GalleryController) GetOne(ctx *gin.Context) {
 	result := gc.DB.Where("id = ?", ctx.Param("id")).First(&gallery)
 
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
+		ctx.JSON(http.StatusBadGateway, gin.H{ "message": result.Error.Error()})
 		return
 	}
 
@@ -92,7 +92,7 @@ func (gc *GalleryController) Create(ctx *gin.Context) {
 	var payload *models.GalleryInput
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{ "message": err.Error()})
 		return
 	}
 
@@ -106,7 +106,7 @@ func (gc *GalleryController) Create(ctx *gin.Context) {
 	result := gc.DB.Create(&newGallery)
 
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
 		return
 	}
 
@@ -118,7 +118,7 @@ func (gc *GalleryController) Create(ctx *gin.Context) {
 		UpdatedAt:  newGallery.UpdatedAt,
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"gallery": response}})
+	ctx.JSON(http.StatusOK, gin.H{"gallery": response})
 }
 
 // delete
@@ -128,7 +128,7 @@ func (gc *GalleryController) Delete(ctx *gin.Context) {
 	result := gc.DB.Where("id = ?", ctx.Param("id")).Delete(&gallery)
 
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
 		return
 	}
 
