@@ -120,3 +120,17 @@ func (gc *GalleryController) Create(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"gallery": response}})
 }
+
+// delete
+func (gc *GalleryController) Delete(ctx *gin.Context) {
+	var gallery models.Gallery
+
+	result := gc.DB.Where("id = ?", ctx.Param("id")).Delete(&gallery)
+
+	if result.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
+}

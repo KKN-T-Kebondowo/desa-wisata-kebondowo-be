@@ -20,7 +20,10 @@ func NewTourismController(DB *gorm.DB) TourismController {
 
 func (tc *TourismController) GetAll(ctx *gin.Context) {
 	var tourisms []models.Tourism
+	var tourismPictures []models.TourismPicture
+	var TourismResponse []models.TourismResponse
 
+	// get all tourisms 
 	result := tc.DB.Find(&tourisms)
 
 	if result.Error != nil {
@@ -28,12 +31,44 @@ func (tc *TourismController) GetAll(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"tourisms": tourisms}})
+	// get all tourism pictures
+	result2 := tc.DB.Find(&tourismPictures)
+
+	if result2.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result2.Error.Error()})
+		return
+	}
+
+	// merge tourisms and tourism pictures with tourism response struct on same tourism id
+	for _, tourism := range tourisms {
+		var tourismResponse models.TourismResponse
+
+		tourismResponse.ID = tourism.ID
+		tourismResponse.Title = tourism.Title
+		tourismResponse.Description = tourism.Description
+		tourismResponse.Latitude = tourism.Latitude
+		tourismResponse.Longitude = tourism.Longitude
+		tourismResponse.CoverPictureUrl = tourism.CoverPictureUrl
+		tourismResponse.Pictures = []models.TourismPicture{}
+
+		for _, tourismPicture := range tourismPictures {
+			if tourismPicture.TourismID == tourism.ID {
+				tourismResponse.Pictures = append(tourismResponse.Pictures, tourismPicture)
+			}
+		}
+		
+		TourismResponse = append(TourismResponse, tourismResponse)
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"tourisms": TourismResponse}})
 }
 
 func (tc *TourismController) GetOne(ctx *gin.Context) {
 	var tourism models.Tourism
+	var tourismPictures []models.TourismPicture
+	var tourismResponse models.TourismResponse
 
+	// get one tourism
 	result := tc.DB.Where("id = ?", ctx.Param("id")).First(&tourism)
 
 	if result.Error != nil {
@@ -41,7 +76,32 @@ func (tc *TourismController) GetOne(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"tourism": tourism}})
+	// get all tourism pictures with same tourism id
+	result2 := tc.DB.Where("tourism_id = ?", ctx.Param("id")).Find(&tourismPictures)
+
+	if result2.Error != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result2.Error.Error()})
+		return
+	}
+
+	// merge tourism and tourism pictures with tourism response struct on same tourism id
+	tourismResponse.ID = tourism.ID
+	tourismResponse.Title = tourism.Title
+	tourismResponse.Description = tourism.Description
+	tourismResponse.Latitude = tourism.Latitude
+	tourismResponse.Longitude = tourism.Longitude
+	tourismResponse.CoverPictureUrl = tourism.CoverPictureUrl
+	tourismResponse.Pictures = []models.TourismPicture{}
+
+	for _, tourismPicture := range tourismPictures {
+		if tourismPicture.TourismID == tourism.ID {
+			tourismResponse.Pictures = append(tourismResponse.Pictures, tourismPicture)
+		}
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"status": "success", "data": gin.H{"tourism": tourismResponse}})
+
+	
 }
 
 
