@@ -1,8 +1,8 @@
 package models
 
 type Role struct {
-	ID   uint32 `gorm:"primary_key"`
-	Name string `gorm:"type:varchar(255);not null"`
+	ID   uint32 `gorm:"column:id;primary_key"`
+	Name string `gorm:"column:name;type:varchar(255);not null"`
 }
 
 type RoleInput struct {

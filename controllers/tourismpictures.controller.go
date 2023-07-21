@@ -37,7 +37,7 @@ func (tpc *TourismPictureController) GetOne(ctx *gin.Context) {
 	result := tpc.DB.Where("id = ?", ctx.Param("id")).First(&tourismPicture)
 
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{ "message": result.Error.Error()})
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
 		return
 	}
 
@@ -47,16 +47,14 @@ func (tpc *TourismPictureController) GetOne(ctx *gin.Context) {
 func (tpc *TourismPictureController) Create(ctx *gin.Context) {
 	var payload *models.TourismPictureInput
 
-
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
 	tourismPicture := models.TourismPicture{
-		TourismID: payload.TourismID,
+		TourismID:  payload.TourismID,
 		PictureUrl: payload.PictureUrl,
-		
 	}
 
 	result := tpc.DB.Create(&tourismPicture)
@@ -66,7 +64,7 @@ func (tpc *TourismPictureController) Create(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK,gin.H{"tourism_picture": tourismPicture})
+	ctx.JSON(http.StatusOK, gin.H{"tourism_picture": tourismPicture})
 }
 
 // delete
