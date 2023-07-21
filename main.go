@@ -24,6 +24,8 @@ var (
 	TourismRouteController routes.TourismRouteController
 	GalleryController      controllers.GalleryController
 	GalleryRouteController routes.GalleryRouteController
+	ArticleController      controllers.ArticleController
+	ArticleRouteController routes.ArticleRouteController
 )
 
 func init() {
@@ -48,6 +50,9 @@ func init() {
 
 	GalleryController = controllers.NewGalleryController(initializers.DB)
 	GalleryRouteController = routes.NewGalleryRouteController(GalleryController)
+
+	ArticleController = controllers.NewArticleController(initializers.DB)
+	ArticleRouteController = routes.NewArticleRouteController(ArticleController)
 
 	server = gin.Default()
 }
@@ -82,6 +87,7 @@ func main() {
 	RoleRouteController.RoleRoute(router)
 	TourismRouteController.TourismRoute(router)
 	GalleryRouteController.GalleryRoute(router)
+	ArticleRouteController.ArticleRoute(router)
 
 	log.Fatal(server.Run("localhost:" + config.ServerPort))
 }
