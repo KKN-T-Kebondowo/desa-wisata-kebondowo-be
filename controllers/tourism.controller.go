@@ -23,7 +23,7 @@ func (tc *TourismController) GetAll(ctx *gin.Context) {
 	var tourismPictures []models.TourismPicture
 	var TourismResponse []models.TourismResponse
 
-	// get all tourisms 
+	// get all tourisms
 	result := tc.DB.Find(&tourisms)
 
 	if result.Error != nil {
@@ -56,7 +56,7 @@ func (tc *TourismController) GetAll(ctx *gin.Context) {
 				tourismResponse.Pictures = append(tourismResponse.Pictures, tourismPicture)
 			}
 		}
-		
+
 		TourismResponse = append(TourismResponse, tourismResponse)
 	}
 
@@ -101,14 +101,10 @@ func (tc *TourismController) GetOne(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"tourism": tourismResponse})
 
-	
 }
-
-
 
 func (tc *TourismController) Create(ctx *gin.Context) {
 	var payload *models.TourismInput
-	
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
@@ -119,11 +115,11 @@ func (tc *TourismController) Create(ctx *gin.Context) {
 	// Make new tourism with tourismpicture
 	// Return tourism with tourismpicture json response
 	newTourism := models.Tourism{
-		Title: payload.Title,
-		Description: payload.Description,
-		Slug : payload.Slug,
-		Latitude : payload.Latitude,
-		Longitude : payload.Longitude,
+		Title:           payload.Title,
+		Description:     payload.Description,
+		Slug:            payload.Slug,
+		Latitude:        payload.Latitude,
+		Longitude:       payload.Longitude,
 		CoverPictureUrl: payload.CoverPictureUrl,
 	}
 
@@ -139,37 +135,30 @@ func (tc *TourismController) Create(ctx *gin.Context) {
 	if payload.Pictures != nil {
 		for _, picture := range payload.Pictures {
 			tourismPicture := models.TourismPicture{
-				PictureUrl : picture.PictureUrl,
-				TourismID : newTourism.ID,
+				PictureUrl: picture.PictureUrl,
+				TourismID:  newTourism.ID,
 			}
 			tc.DB.Create(&tourismPicture)
 
 		}
 
-		
 	}
-
-
 
 	response := &models.TourismResponse{
-		ID : newTourism.ID,
-		Title : newTourism.Title,
-		Description : newTourism.Description,
-		Slug : newTourism.Slug,
-		CoverPictureUrl : newTourism.CoverPictureUrl,
-		Latitude : newTourism.Latitude,
-		Longitude : newTourism.Longitude,
-		CreatedAt : newTourism.CreatedAt,
-		UpdatedAt : newTourism.UpdatedAt,
-		Pictures : []models.TourismPicture{},
+		ID:              newTourism.ID,
+		Title:           newTourism.Title,
+		Description:     newTourism.Description,
+		Slug:            newTourism.Slug,
+		CoverPictureUrl: newTourism.CoverPictureUrl,
+		Latitude:        newTourism.Latitude,
+		Longitude:       newTourism.Longitude,
+		CreatedAt:       newTourism.CreatedAt,
+		UpdatedAt:       newTourism.UpdatedAt,
+		Pictures:        []models.TourismPicture{},
 	}
-
-	
-
 
 	ctx.JSON(http.StatusOK, gin.H{"tourism": response})
 }
-
 
 // Update tourism with tourismpicture
 // Return tourism with tourismpicture json response
@@ -178,7 +167,7 @@ func (tc *TourismController) Update(ctx *gin.Context) {
 	var tourism models.Tourism
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{ "message": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
@@ -203,18 +192,17 @@ func (tc *TourismController) Update(ctx *gin.Context) {
 		return
 	}
 
-
 	response := &models.TourismResponse{
-		ID : tourism.ID,
-		Title : tourism.Title,
-		Description : tourism.Description,
-		Slug : tourism.Slug,
-		CoverPictureUrl : tourism.CoverPictureUrl,
-		Latitude : tourism.Latitude,
-		Longitude : tourism.Longitude,
-		CreatedAt : tourism.CreatedAt,
-		UpdatedAt : tourism.UpdatedAt,
-		Pictures : []models.TourismPicture{},
+		ID:              tourism.ID,
+		Title:           tourism.Title,
+		Description:     tourism.Description,
+		Slug:            tourism.Slug,
+		CoverPictureUrl: tourism.CoverPictureUrl,
+		Latitude:        tourism.Latitude,
+		Longitude:       tourism.Longitude,
+		CreatedAt:       tourism.CreatedAt,
+		UpdatedAt:       tourism.UpdatedAt,
+		Pictures:        []models.TourismPicture{},
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"tourism": response})
@@ -229,10 +217,9 @@ func (tc *TourismController) Delete(ctx *gin.Context) {
 	result := tc.DB.Where("tourism_id = ?", ctx.Param("id")).Delete(&tourismpicture)
 
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{ "message": result.Error.Error()})
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
 		return
 	}
-	
 
 	result2 := tc.DB.Where("id = ?", ctx.Param("id")).First(&tourism)
 
@@ -244,11 +231,9 @@ func (tc *TourismController) Delete(ctx *gin.Context) {
 	result2 = tc.DB.Delete(&tourism)
 
 	if result2.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{ "message": result.Error.Error()})
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
 		return
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"tourism": tourism})
 }
-
-

@@ -5,11 +5,11 @@ import (
 )
 
 type Gallery struct {
-	ID         uint32    `gorm:"primary_key" json:"id"`
-	PictureUrl string    `gorm:"type:varchar(255);not null" json:"picture_url"`
-	Caption    string    `gorm:"type:varchar(255);not null" json:"caption"`
-	CreatedAt  time.Time `gorm:"not null" json:"created_at"`
-	UpdatedAt  time.Time `gorm:"not null" json:"updated_at"`
+	ID         uint32    `gorm:"column:id;primary_key"`
+	PictureUrl string    `gorm:"column:picture_url;type:varchar(255);not null"`
+	Caption    string    `gorm:"column:caption;type:varchar(255);not null"`
+	CreatedAt  time.Time `gorm:"column:created_at;not null"`
+	UpdatedAt  time.Time `gorm:"column:updated_at;not null"`
 }
 
 type GalleryInput struct {
