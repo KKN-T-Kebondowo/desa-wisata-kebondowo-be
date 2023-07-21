@@ -72,7 +72,7 @@ func (tc *TourismController) GetOne(ctx *gin.Context) {
 	result := tc.DB.Where("id = ?", ctx.Param("id")).First(&tourism)
 
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
+		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
 		return
 	}
 
@@ -99,7 +99,7 @@ func (tc *TourismController) GetOne(ctx *gin.Context) {
 		}
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"tourism": tourismResponse})
+	ctx.JSON(http.StatusOK, gin.H{"data": gin.H{"tourism": tourismResponse}})
 
 	
 }
@@ -111,7 +111,7 @@ func (tc *TourismController) Create(ctx *gin.Context) {
 	
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{ "message": err.Error()})
 		return
 	}
 
@@ -167,7 +167,7 @@ func (tc *TourismController) Create(ctx *gin.Context) {
 	
 
 
-	ctx.JSON(http.StatusOK, gin.H{"tourism": response})
+	ctx.JSON(http.StatusOK,gin.H{"tourism": response})
 }
 
 
@@ -178,7 +178,7 @@ func (tc *TourismController) Update(ctx *gin.Context) {
 	var tourism models.Tourism
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{ "message": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
@@ -217,7 +217,7 @@ func (tc *TourismController) Update(ctx *gin.Context) {
 		Pictures : []models.TourismPicture{},
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"tourism": response})
+	ctx.JSON(http.StatusOK, gin.H{"data": gin.H{"tourism": response}})
 }
 
 // Delete tourism with tourismpicture
@@ -229,7 +229,7 @@ func (tc *TourismController) Delete(ctx *gin.Context) {
 	result := tc.DB.Where("tourism_id = ?", ctx.Param("id")).Delete(&tourismpicture)
 
 	if result.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{ "message": result.Error.Error()})
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
 		return
 	}
 	
@@ -244,11 +244,11 @@ func (tc *TourismController) Delete(ctx *gin.Context) {
 	result2 = tc.DB.Delete(&tourism)
 
 	if result2.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{ "message": result.Error.Error()})
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"tourism": tourism})
+	ctx.JSON(http.StatusOK,gin.H{"tourism": tourism})
 }
 
 

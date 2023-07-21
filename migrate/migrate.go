@@ -23,6 +23,7 @@ func main() {
 	initializers.DB.AutoMigrate(&models.Tourism{})
 	initializers.DB.AutoMigrate(&models.TourismPicture{})
 	initializers.DB.AutoMigrate(&models.Gallery{})
+	initializers.DB.AutoMigrate(&models.Article{})
 
 	fmt.Println("? Migration complete")
 }
