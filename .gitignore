@@ -20,3 +20,5 @@ logs.txt
 .dockerignore
 fly.toml
 ```
+
+.env
