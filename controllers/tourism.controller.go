@@ -42,6 +42,7 @@ func (tc *TourismController) GetAll(ctx *gin.Context) {
 	// merge tourisms and tourism pictures with tourism response struct on same tourism id
 	for _, tourism := range tourisms {
 		var tourismResponse models.TourismResponse
+	
 
 		tourismResponse.ID = tourism.ID
 		tourismResponse.Title = tourism.Title
@@ -49,11 +50,15 @@ func (tc *TourismController) GetAll(ctx *gin.Context) {
 		tourismResponse.Latitude = tourism.Latitude
 		tourismResponse.Longitude = tourism.Longitude
 		tourismResponse.CoverPictureUrl = tourism.CoverPictureUrl
-		tourismResponse.Pictures = []models.TourismPicture{}
+		tourismResponse.Pictures = []models.TourismPictureResponse{}
 
 		for _, tourismPicture := range tourismPictures {
 			if tourismPicture.TourismID == tourism.ID {
-				tourismResponse.Pictures = append(tourismResponse.Pictures, tourismPicture)
+				tourismResponse.Pictures = append(tourismResponse.Pictures, models.TourismPictureResponse{
+					ID:         tourismPicture.ID,
+					PictureUrl: tourismPicture.PictureUrl,
+					TourismID:  tourismPicture.TourismID,
+				})
 			}
 		}
 
@@ -91,11 +96,15 @@ func (tc *TourismController) GetOne(ctx *gin.Context) {
 	tourismResponse.Latitude = tourism.Latitude
 	tourismResponse.Longitude = tourism.Longitude
 	tourismResponse.CoverPictureUrl = tourism.CoverPictureUrl
-	tourismResponse.Pictures = []models.TourismPicture{}
+	tourismResponse.Pictures = []models.TourismPictureResponse{}
 
 	for _, tourismPicture := range tourismPictures {
 		if tourismPicture.TourismID == tourism.ID {
-			tourismResponse.Pictures = append(tourismResponse.Pictures, tourismPicture)
+			tourismResponse.Pictures = append(tourismResponse.Pictures, models.TourismPictureResponse{
+				ID:         tourismPicture.ID,
+				PictureUrl: tourismPicture.PictureUrl,
+				TourismID:  tourismPicture.TourismID,
+			})
 		}
 	}
 
@@ -154,7 +163,7 @@ func (tc *TourismController) Create(ctx *gin.Context) {
 		Longitude:       newTourism.Longitude,
 		CreatedAt:       newTourism.CreatedAt,
 		UpdatedAt:       newTourism.UpdatedAt,
-		Pictures:        []models.TourismPicture{},
+		Pictures:        []models.TourismPictureResponse{},
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"tourism": response})
@@ -202,7 +211,7 @@ func (tc *TourismController) Update(ctx *gin.Context) {
 		Longitude:       tourism.Longitude,
 		CreatedAt:       tourism.CreatedAt,
 		UpdatedAt:       tourism.UpdatedAt,
-		Pictures:        []models.TourismPicture{},
+		Pictures:        []models.TourismPictureResponse{},
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"data": gin.H{"tourism": response}})

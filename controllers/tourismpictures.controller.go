@@ -41,7 +41,7 @@ func (tpc *TourismPictureController) GetOne(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"data": gin.H{"tourism_picture": tourismPicture}})
+	ctx.JSON(http.StatusOK,  gin.H{"tourism_picture": tourismPicture})
 }
 
 func (tpc *TourismPictureController) Create(ctx *gin.Context) {

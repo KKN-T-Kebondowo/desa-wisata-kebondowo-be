@@ -23,7 +23,7 @@ type TourismInput struct {
 	Longitude       float64               `json:"longitude" binding:"required"`
 	CoverPictureUrl string                `json:"cover_picture_url" binding:"required"`
 	Description     string                `json:"description" binding:"required"`
-	Pictures        []TourismPictureInput `json:"pictures" binding:"required"`
+	Pictures        []TourismPictureInput `json:"pictures"`
 }
 
 type TourismResponse struct {
@@ -34,7 +34,7 @@ type TourismResponse struct {
 	Description     string           `json:"description,omitempty"`
 	Latitude        float64          `json:"latitude,omitempty"`
 	Longitude       float64          `json:"longitude,omitempty"`
-	Pictures        []TourismPicture `json:"pictures,omitempty"`
+	Pictures        []TourismPictureResponse `json:"pictures,omitempty"`
 	CreatedAt       time.Time        `json:"created_at,omitempty"`
 	UpdatedAt       time.Time        `json:"updated_at,omitempty"`
 }
