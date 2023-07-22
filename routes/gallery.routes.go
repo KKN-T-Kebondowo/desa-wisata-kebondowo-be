@@ -19,4 +19,5 @@ func (gc *GalleryRouteController) GalleryRoute(rg *gin.RouterGroup) {
 	router.GET("/", gc.galleryController.GetAll)
 	router.GET("/:id", gc.galleryController.GetOne)
 	router.POST("/", gc.galleryController.Create)
+	router.DELETE("/:id", gc.galleryController.Delete)
 }

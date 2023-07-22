@@ -23,6 +23,14 @@ type ArticleInput struct {
 	PictureUrl string `json:"picture_url" binding:"required"`
 }
 
+type ArticleUpdate struct {
+	Title      string `json:"title" binding:"required"`
+	Slug       string `json:"slug" binding:"required"`
+	Author     string `json:"author" binding:"required"`
+	Content    string `json:"content" binding:"required"`
+	PictureUrl string `json:"picture_url"`
+}
+
 type ArticleResponse struct {
 	ID         uint32    `json:"id,omitempty"`
 	Title      string    `json:"title,omitempty"`

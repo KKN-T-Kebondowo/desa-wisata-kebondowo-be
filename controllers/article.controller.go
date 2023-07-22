@@ -78,7 +78,7 @@ func (ac *ArticleController) GetAll(ctx *gin.Context) {
 func (ac *ArticleController) GetOne(ctx *gin.Context) {
 	var article models.Article
 
-	result := ac.DB.Where("id = ?", ctx.Param("id")).First(&article)
+	result := ac.DB.Where("slug = ?", ctx.Param("slug")).First(&article) // Use slug instead of id
 
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
@@ -128,7 +128,7 @@ func (ac *ArticleController) Create(ctx *gin.Context) {
 }
 
 func (ac *ArticleController) Update(ctx *gin.Context) {
-	var payload *models.ArticleInput
+	var payload *models.ArticleUpdate
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
@@ -155,7 +155,9 @@ func (ac *ArticleController) Update(ctx *gin.Context) {
 	existingArticle.Slug = payload.Slug
 	existingArticle.Author = payload.Author
 	existingArticle.Content = payload.Content
-	existingArticle.PictureUrl = payload.PictureUrl
+	if payload.PictureUrl != "" {
+		existingArticle.PictureUrl = payload.PictureUrl
+	}
 	existingArticle.UpdatedAt = time.Now()
 
 	// Save the updated article in the database

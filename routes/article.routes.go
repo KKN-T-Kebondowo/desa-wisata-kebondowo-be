@@ -17,7 +17,7 @@ func NewArticleRouteController(articleController controllers.ArticleController) 
 func (ac *ArticleRouteController) ArticleRoute(rg *gin.RouterGroup) {
 	router := rg.Group("/articles")
 	router.GET("/", ac.articleController.GetAll)
-	router.GET("/:id", ac.articleController.GetOne)
+	router.GET("/:slug", ac.articleController.GetOne) // Use :slug instead of :id
 	router.POST("/", ac.articleController.Create)
 	router.PUT("/:id", ac.articleController.Update)
 	router.DELETE("/:id", ac.articleController.Delete)
