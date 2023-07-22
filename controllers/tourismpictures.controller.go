@@ -20,6 +20,7 @@ func NewTourismPictureController(DB *gorm.DB) TourismPictureController {
 
 func (tpc *TourismPictureController) GetAll(ctx *gin.Context) {
 	var tourismPictures []models.TourismPicture
+	var tourismPictureResponse []models.TourismPictureResponse
 
 	result := tpc.DB.Find(&tourismPictures)
 
@@ -28,11 +29,21 @@ func (tpc *TourismPictureController) GetAll(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"tourism_pictures": tourismPictures})
+	for _, tourismPicture := range tourismPictures {
+		tourismPictureResponse = append(tourismPictureResponse, models.TourismPictureResponse{
+			ID:         tourismPicture.ID,
+			PictureUrl: tourismPicture.PictureUrl,
+			TourismID:  tourismPicture.TourismID,
+		})
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"tourism_pictures": tourismPictureResponse})
+
 }
 
 func (tpc *TourismPictureController) GetOne(ctx *gin.Context) {
 	var tourismPicture models.TourismPicture
+	var tourismPictureResponse models.TourismPictureResponse
 
 	result := tpc.DB.Where("id = ?", ctx.Param("id")).First(&tourismPicture)
 
@@ -41,7 +52,12 @@ func (tpc *TourismPictureController) GetOne(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK,  gin.H{"tourism_picture": tourismPicture})
+	tourismPictureResponse.ID = tourismPicture.ID
+	tourismPictureResponse.PictureUrl = tourismPicture.PictureUrl
+	tourismPictureResponse.TourismID = tourismPicture.TourismID
+
+	ctx.JSON(http.StatusOK, gin.H{"tourism_picture": tourismPictureResponse})
+	
 }
 
 func (tpc *TourismPictureController) Create(ctx *gin.Context) {
