@@ -42,10 +42,10 @@ func (tc *TourismController) GetAll(ctx *gin.Context) {
 	// merge tourisms and tourism pictures with tourism response struct on same tourism id
 	for _, tourism := range tourisms {
 		var tourismResponse models.TourismResponse
-	
 
 		tourismResponse.ID = tourism.ID
 		tourismResponse.Title = tourism.Title
+		tourismResponse.Slug = tourism.Slug
 		tourismResponse.Description = tourism.Description
 		tourismResponse.Latitude = tourism.Latitude
 		tourismResponse.Longitude = tourism.Longitude
@@ -73,25 +73,26 @@ func (tc *TourismController) GetOne(ctx *gin.Context) {
 	var tourismPictures []models.TourismPicture
 	var tourismResponse models.TourismResponse
 
-	// get one tourism
-	result := tc.DB.Where("id = ?", ctx.Param("id")).First(&tourism)
+	// Get one tourism by slug instead of id
+	result := tc.DB.Where("slug = ?", ctx.Param("slug")).First(&tourism)
 
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"status": "error", "message": result.Error.Error()})
 		return
 	}
 
-	// get all tourism pictures with same tourism id
-	result2 := tc.DB.Where("tourism_id = ?", ctx.Param("id")).Find(&tourismPictures)
+	// Get all tourism pictures with the same tourism id
+	result2 := tc.DB.Where("tourism_id = ?", tourism.ID).Find(&tourismPictures)
 
 	if result2.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": result2.Error.Error()})
 		return
 	}
 
-	// merge tourism and tourism pictures with tourism response struct on same tourism id
+	// Merge tourism and tourism pictures with the tourism response struct on the same tourism id
 	tourismResponse.ID = tourism.ID
 	tourismResponse.Title = tourism.Title
+	tourismResponse.Slug = tourism.Slug
 	tourismResponse.Description = tourism.Description
 	tourismResponse.Latitude = tourism.Latitude
 	tourismResponse.Longitude = tourism.Longitude
@@ -109,14 +110,13 @@ func (tc *TourismController) GetOne(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"data": gin.H{"tourism": tourismResponse}})
-
 }
 
 func (tc *TourismController) Create(ctx *gin.Context) {
 	var payload *models.TourismInput
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{ "message": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
@@ -244,5 +244,5 @@ func (tc *TourismController) Delete(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK,gin.H{"tourism": tourism})
+	ctx.JSON(http.StatusOK, gin.H{"tourism": tourism})
 }

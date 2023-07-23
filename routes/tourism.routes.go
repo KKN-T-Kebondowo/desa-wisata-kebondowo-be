@@ -15,11 +15,11 @@ func NewTourismRouteController(tourismController controllers.TourismController) 
 }
 
 func (tc *TourismRouteController) TourismRoute(rg *gin.RouterGroup) {
-	
+
 	router := rg.Group("tourisms")
-	router.GET("/",  tc.tourismController.GetAll)
-	router.GET("/:id", tc.tourismController.GetOne)
+	router.GET("/", tc.tourismController.GetAll)
+	router.GET("/:slug", tc.tourismController.GetOne)
 	router.POST("/", tc.tourismController.Create)
-	router.PUT("/:id",  tc.tourismController.Update)
+	router.PUT("/:id", tc.tourismController.Update)
 	router.DELETE("/:id", tc.tourismController.Delete)
 }
