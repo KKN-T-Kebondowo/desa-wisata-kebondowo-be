@@ -18,6 +18,15 @@ func NewDashboardController(DB *gorm.DB) DashboardController {
 	return DashboardController{DB}
 }
 
+func circularShift(arr []int64, positions int) []int64 {
+	n := len(arr)
+	shiftedArr := make([]int64, n)
+	for i := 0; i < n; i++ {
+		shiftedArr[i] = arr[(i+positions)%n]
+	}
+	return shiftedArr
+}
+
 func (dc *DashboardController) GetDashboard(ctx *gin.Context) {
 	// get total article
 	var totalArticle int64
@@ -31,56 +40,84 @@ func (dc *DashboardController) GetDashboard(ctx *gin.Context) {
 	var totalTourism int64
 	dc.DB.Model(&models.Tourism{}).Count(&totalTourism)
 
-	var monthNow = int(time.Now().Month())
-	var yearNow = int(time.Now().Year())
+	now := time.Now()
+	oneYearAgo := now.AddDate(-1, 0, 0)
 
-
-	// get article per month
-	var articlePerMonth []int32
-	for i := monthNow+1; i <= 12; i++ {
-		var count int32
-		dc.DB.Raw("SELECT COUNT(*) FROM articles WHERE EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", i, yearNow-1).Scan(&count)
-		articlePerMonth = append(articlePerMonth, count)
+	type MonthData struct {
+		Month time.Month
+		Count int64
 	}
 
-	// ambil data dari tahun sekarang
-	for i := 1; i <= monthNow; i++ {
-		var count int32
-		dc.DB.Raw("SELECT COUNT(*) FROM articles WHERE EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", i, yearNow).Scan(&count)
-		articlePerMonth = append(articlePerMonth, count)
-	}
-	
+	// Fetch article data
+	var articleData []MonthData
+	dc.DB.Raw(`
+		SELECT
+			EXTRACT(MONTH FROM created_at) as month,
+			COUNT(*) as count
+		FROM
+			articles
+		WHERE
+			created_at >= ? AND created_at < ?
+		GROUP BY
+			EXTRACT(MONTH FROM created_at)
+		ORDER BY
+			EXTRACT(MONTH FROM created_at)
+	`, oneYearAgo, now).Scan(&articleData)
 
-
-	// get gallery per month
-	var galleryPerMonth []int32
-	for i := monthNow+1; i <= 12; i++ {
-		var count int32
-		dc.DB.Raw("SELECT COUNT(*) FROM galleries WHERE EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", i, yearNow-1).Scan(&count)
-		galleryPerMonth = append(galleryPerMonth, count)
-	}
-
-	for i := 1; i <= monthNow; i++ {
-		var count int32
-		dc.DB.Raw("SELECT COUNT(*) FROM galleries WHERE EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", i, yearNow).Scan(&count)
-		galleryPerMonth = append(galleryPerMonth, count)
-	}
-
-	// get tourism per month
-	var tourismPerMonth []int32
-	for i := monthNow+1; i <= 12; i++ {
-		var count int32
-		dc.DB.Raw("SELECT COUNT(*) FROM tourisms WHERE EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", i, yearNow-1).Scan(&count)
-		tourismPerMonth = append(tourismPerMonth, count)
+	articlePerMonth := make([]int64, 12)
+	for _, data := range articleData {
+		// Since the month ranges from 1 to 12, we need to subtract 1 to get the correct index in the array.
+		articlePerMonth[data.Month-1] = data.Count
 	}
 
-	for i := 1; i <= monthNow; i++ {
-		var count int32
-		dc.DB.Raw("SELECT COUNT(*) FROM tourisms WHERE EXTRACT(MONTH FROM created_at) = ? AND EXTRACT(YEAR FROM created_at) = ?", i, yearNow).Scan(&count)
-		tourismPerMonth = append(tourismPerMonth, count)
+	// Fetch gallery data
+	var galleryData []MonthData
+	dc.DB.Raw(`
+		SELECT
+			EXTRACT(MONTH FROM created_at) as month,
+			COUNT(*) as count
+		FROM
+			galleries
+		WHERE
+			created_at >= ? AND created_at < ?
+		GROUP BY
+			EXTRACT(MONTH FROM created_at)
+		ORDER BY
+			EXTRACT(MONTH FROM created_at)
+	`, oneYearAgo, now).Scan(&galleryData)
+
+	galleryPerMonth := make([]int64, 12)
+	for _, data := range galleryData {
+		// Since the month ranges from 1 to 12, we need to subtract 1 to get the correct index in the array.
+		galleryPerMonth[data.Month-1] = data.Count
 	}
 
+	// Fetch tourism data
+	var tourismData []MonthData
+	dc.DB.Raw(`
+		SELECT
+			EXTRACT(MONTH FROM created_at) as month,
+			COUNT(*) as count
+		FROM
+			tourisms
+		WHERE
+			created_at >= ? AND created_at < ?
+		GROUP BY
+			EXTRACT(MONTH FROM created_at)
+		ORDER BY
+			EXTRACT(MONTH FROM created_at)
+	`, oneYearAgo, now).Scan(&tourismData)
 
+	tourismPerMonth := make([]int64, 12)
+	for _, data := range tourismData {
+		// Since the month ranges from 1 to 12, we need to subtract 1 to get the correct index in the array.
+		tourismPerMonth[data.Month-1] = data.Count
+	}
+
+	currentMonth := int(now.Month())
+	articlePerMonth = circularShift(articlePerMonth, currentMonth)
+	galleryPerMonth = circularShift(galleryPerMonth, currentMonth)
+	tourismPerMonth = circularShift(tourismPerMonth, currentMonth)
 
 	dashboardResponse := &models.DashboardResponse{
 		TotalArticle:    totalArticle,
@@ -92,5 +129,4 @@ func (dc *DashboardController) GetDashboard(ctx *gin.Context) {
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"data": dashboardResponse})
-
 }
