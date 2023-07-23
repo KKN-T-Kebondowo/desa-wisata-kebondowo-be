@@ -109,7 +109,7 @@ func (tc *TourismController) GetOne(ctx *gin.Context) {
 		}
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"data": gin.H{"tourism": tourismResponse}})
+	ctx.JSON(http.StatusOK, gin.H{"tourism": tourismResponse})
 }
 
 func (tc *TourismController) Create(ctx *gin.Context) {
@@ -172,7 +172,7 @@ func (tc *TourismController) Create(ctx *gin.Context) {
 // Update tourism with tourismpicture
 // Return tourism with tourismpicture json response
 func (tc *TourismController) Update(ctx *gin.Context) {
-	var payload *models.TourismInput
+	var payload *models.TourismUpdate
 	var tourism models.Tourism
 
 	if err := ctx.ShouldBindJSON(&payload); err != nil {
@@ -192,7 +192,9 @@ func (tc *TourismController) Update(ctx *gin.Context) {
 	tourism.Slug = payload.Slug
 	tourism.Latitude = payload.Latitude
 	tourism.Longitude = payload.Longitude
-	tourism.CoverPictureUrl = payload.CoverPictureUrl
+	if payload.CoverPictureUrl != "" {
+		tourism.CoverPictureUrl = payload.CoverPictureUrl
+	}
 
 	result = tc.DB.Save(&tourism)
 
@@ -214,7 +216,7 @@ func (tc *TourismController) Update(ctx *gin.Context) {
 		Pictures:        []models.TourismPictureResponse{},
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"data": gin.H{"tourism": response}})
+	ctx.JSON(http.StatusOK, gin.H{"tourism": response})
 }
 
 // Delete tourism with tourismpicture
