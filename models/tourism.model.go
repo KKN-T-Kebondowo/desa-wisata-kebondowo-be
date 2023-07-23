@@ -26,15 +26,24 @@ type TourismInput struct {
 	Pictures        []TourismPictureInput `json:"pictures"`
 }
 
+type TourismUpdate struct {
+	Title           string  `json:"title" binding:"required"`
+	Slug            string  `json:"slug" binding:"required"`
+	Latitude        float64 `json:"latitude" binding:"required"`
+	Longitude       float64 `json:"longitude" binding:"required"`
+	CoverPictureUrl string  `json:"cover_picture_url"`
+	Description     string  `json:"description" binding:"required"`
+}
+
 type TourismResponse struct {
-	ID              uint32           `json:"id,omitempty"`
-	Title           string           `json:"title,omitempty"`
-	Slug            string           `json:"slug,omitempty"`
-	CoverPictureUrl string           `json:"cover_picture_url,omitempty"`
-	Description     string           `json:"description,omitempty"`
-	Latitude        float64          `json:"latitude,omitempty"`
-	Longitude       float64          `json:"longitude,omitempty"`
+	ID              uint32                   `json:"id,omitempty"`
+	Title           string                   `json:"title,omitempty"`
+	Slug            string                   `json:"slug,omitempty"`
+	CoverPictureUrl string                   `json:"cover_picture_url,omitempty"`
+	Description     string                   `json:"description,omitempty"`
+	Latitude        float64                  `json:"latitude,omitempty"`
+	Longitude       float64                  `json:"longitude,omitempty"`
 	Pictures        []TourismPictureResponse `json:"pictures,omitempty"`
-	CreatedAt       time.Time        `json:"created_at,omitempty"`
-	UpdatedAt       time.Time        `json:"updated_at,omitempty"`
+	CreatedAt       time.Time                `json:"created_at,omitempty"`
+	UpdatedAt       time.Time                `json:"updated_at,omitempty"`
 }
