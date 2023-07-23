@@ -104,6 +104,7 @@ func (tc *TourismController) GetOne(ctx *gin.Context) {
 			tourismResponse.Pictures = append(tourismResponse.Pictures, models.TourismPictureResponse{
 				ID:         tourismPicture.ID,
 				PictureUrl: tourismPicture.PictureUrl,
+				Caption:    tourismPicture.Caption,
 				TourismID:  tourismPicture.TourismID,
 			})
 		}

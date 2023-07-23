@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"time"
 
 	"kebondowo/models"
 
@@ -57,7 +58,7 @@ func (tpc *TourismPictureController) GetOne(ctx *gin.Context) {
 	tourismPictureResponse.TourismID = tourismPicture.TourismID
 
 	ctx.JSON(http.StatusOK, gin.H{"tourism_picture": tourismPictureResponse})
-	
+
 }
 
 func (tpc *TourismPictureController) Create(ctx *gin.Context) {
@@ -71,6 +72,9 @@ func (tpc *TourismPictureController) Create(ctx *gin.Context) {
 	tourismPicture := models.TourismPicture{
 		TourismID:  payload.TourismID,
 		PictureUrl: payload.PictureUrl,
+		Caption:    payload.Caption,
+		CreatedAt:  time.Now(),
+		UpdatedAt:  time.Now(),
 	}
 
 	result := tpc.DB.Create(&tourismPicture)
@@ -80,7 +84,15 @@ func (tpc *TourismPictureController) Create(ctx *gin.Context) {
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"tourism_picture": tourismPicture})
+	response := &models.TourismPictureResponse{
+		ID:         tourismPicture.ID,
+		PictureUrl: tourismPicture.PictureUrl,
+		Caption:    tourismPicture.Caption,
+		CreatedAt:  tourismPicture.CreatedAt,
+		UpdatedAt:  tourismPicture.UpdatedAt,
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"tourism_picture": response})
 }
 
 // delete
