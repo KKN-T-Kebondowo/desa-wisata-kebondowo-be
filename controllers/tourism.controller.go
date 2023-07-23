@@ -5,6 +5,8 @@ import (
 
 	"kebondowo/models"
 
+	"strconv"
+
 	"github.com/gin-gonic/gin"
 
 	"gorm.io/gorm"
@@ -120,6 +122,19 @@ func (tc *TourismController) Create(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
+
+	// check on db if slug is exist then add -1, -2, -3, etc
+	var slug string
+	var count int64
+	tc.DB.Model(&models.Tourism{}).Where("slug = ?", payload.Slug).Count(&count)
+
+	if count > 0 {
+		slug = payload.Slug + "-" + strconv.FormatInt(count, 10)
+	} else {
+		slug = payload.Slug
+	}
+
+	payload.Slug = slug
 
 	// User Make new tourism with tourismpicture
 	// Make new tourism with tourismpicture
