@@ -128,5 +128,5 @@ func (dc *DashboardController) GetDashboard(ctx *gin.Context) {
 		TourismPerMonth: tourismPerMonth,
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"data": dashboardResponse})
+	ctx.JSON(http.StatusOK, dashboardResponse)
 }
