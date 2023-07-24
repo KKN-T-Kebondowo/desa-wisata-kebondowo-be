@@ -74,7 +74,7 @@ func main() {
 	}
 
 	corsConfig := cors.DefaultConfig()
-	corsConfig.AllowOrigins = []string{"http://localhost:3000", "https://dashboard-desa-wisata-kebondowo.vercel.app", "https://desa-wisata-kebondowo-dashboard.vercel.app"}
+	corsConfig.AllowOrigins = []string{"http://localhost:3000", "https://dashboard-desa-wisata-kebondowo.vercel.app", "https://desa-wisata-kebondowo-dashboard.vercel.app", "https://dashboard.kebondowo.com"}
 	corsConfig.AllowCredentials = true
 	corsConfig.AllowHeaders = []string{"Authorization", "Content-Type"} // Add "Content-Type" to allowed headers
 

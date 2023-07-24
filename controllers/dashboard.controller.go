@@ -40,6 +40,26 @@ func (dc *DashboardController) GetDashboard(ctx *gin.Context) {
 	var totalTourism int64
 	dc.DB.Model(&models.Tourism{}).Count(&totalTourism)
 
+	var totalVisitor int64
+	// get visitor data from tourism and article table and sum it
+	dc.DB.Raw(`
+		SELECT
+			SUM(visitor) as total_visitor
+		FROM
+			(
+				SELECT
+					visitor
+				FROM
+					tourisms
+				UNION ALL
+				SELECT
+					visitor
+				FROM
+					articles
+			) as visitor
+	`).Scan(&totalVisitor)
+
+
 	now := time.Now()
 	oneYearAgo := now.AddDate(-1, 0, 0)
 
@@ -123,6 +143,7 @@ func (dc *DashboardController) GetDashboard(ctx *gin.Context) {
 		TotalArticle:    totalArticle,
 		TotalGallery:    totalGallery,
 		TotalTourism:    totalTourism,
+		TotalVisitor:    totalVisitor,
 		ArticlePerMonth: articlePerMonth,
 		GalleryPerMonth: galleryPerMonth,
 		TourismPerMonth: tourismPerMonth,
