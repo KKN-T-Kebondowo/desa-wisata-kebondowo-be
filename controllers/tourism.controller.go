@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"net/http"
+	"time"
 
 	"kebondowo/models"
 
@@ -86,8 +87,10 @@ func (tc *TourismController) GetOne(ctx *gin.Context) {
 
 	// Increment the visitor count
 	tourism.Visitor++
-	tc.DB.Save(&tourism)
+	tc.DB.Model(&tourism).UpdateColumn("visitor", tourism.Visitor)
 
+	// article.Visitor++
+	// ac.DB.Model(&article).UpdateColumn("visitor", article.Visitor)
 
 	// Get all tourism pictures with the same tourism id
 	result2 := tc.DB.Where("tourism_id = ?", tourism.ID).Find(&tourismPictures)
@@ -96,8 +99,6 @@ func (tc *TourismController) GetOne(ctx *gin.Context) {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": result2.Error.Error()})
 		return
 	}
-
-
 
 	// Merge tourism and tourism pictures with the tourism response struct on the same tourism id
 	tourismResponse.ID = tourism.ID
@@ -156,6 +157,8 @@ func (tc *TourismController) Create(ctx *gin.Context) {
 		Latitude:        payload.Latitude,
 		Longitude:       payload.Longitude,
 		CoverPictureUrl: payload.CoverPictureUrl,
+		CreatedAt:       time.Now(),
+		UpdatedAt:       time.Now(),
 	}
 
 	result := tc.DB.Create(&newTourism)
