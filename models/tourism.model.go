@@ -12,6 +12,7 @@ type Tourism struct {
 	Description     string    `gorm:"column:description;type:varchar(255);not null"`
 	Latitude        float64   `gorm:"column:latitude;type:float;not null"`
 	Longitude       float64   `gorm:"column:longitude;type:float;not null"`
+	Visitor         uint32    `gorm:"column:visitor;not null;default:0"`
 	CreatedAt       time.Time `gorm:"column:created_at;not null"`
 	UpdatedAt       time.Time `gorm:"column:updated_at;not null"`
 }
@@ -43,6 +44,7 @@ type TourismResponse struct {
 	Description     string                   `json:"description,omitempty"`
 	Latitude        float64                  `json:"latitude,omitempty"`
 	Longitude       float64                  `json:"longitude,omitempty"`
+	Visitor         uint32                   `json:"visitor,omitempty"`
 	Pictures        []TourismPictureResponse `json:"pictures,omitempty"`
 	CreatedAt       time.Time                `json:"created_at,omitempty"`
 	UpdatedAt       time.Time                `json:"updated_at,omitempty"`

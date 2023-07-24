@@ -2,6 +2,7 @@ package routes
 
 import (
 	"kebondowo/controllers"
+	"kebondowo/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,7 +19,7 @@ func (ac *ArticleRouteController) ArticleRoute(rg *gin.RouterGroup) {
 	router := rg.Group("/articles")
 	router.GET("/", ac.articleController.GetAll)
 	router.GET("/:slug", ac.articleController.GetOne) // Use :slug instead of :id
-	router.POST("/", ac.articleController.Create)
-	router.PUT("/:id", ac.articleController.Update)
-	router.DELETE("/:id", ac.articleController.Delete)
+	router.POST("/", middleware.DeserializeUser() ,ac.articleController.Create)
+	router.PUT("/:id", middleware.DeserializeUser(),ac.articleController.Update)
+	router.DELETE("/:id", middleware.DeserializeUser() ,ac.articleController.Delete)
 }

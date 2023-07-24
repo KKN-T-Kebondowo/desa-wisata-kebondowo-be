@@ -52,6 +52,7 @@ func (tc *TourismController) GetAll(ctx *gin.Context) {
 		tourismResponse.Latitude = tourism.Latitude
 		tourismResponse.Longitude = tourism.Longitude
 		tourismResponse.CoverPictureUrl = tourism.CoverPictureUrl
+		tourismResponse.Visitor = tourism.Visitor
 		tourismResponse.Pictures = []models.TourismPictureResponse{}
 
 		for _, tourismPicture := range tourismPictures {
@@ -83,6 +84,11 @@ func (tc *TourismController) GetOne(ctx *gin.Context) {
 		return
 	}
 
+	// Increment the visitor count
+	tourism.Visitor++
+	tc.DB.Save(&tourism)
+
+
 	// Get all tourism pictures with the same tourism id
 	result2 := tc.DB.Where("tourism_id = ?", tourism.ID).Find(&tourismPictures)
 
@@ -91,6 +97,8 @@ func (tc *TourismController) GetOne(ctx *gin.Context) {
 		return
 	}
 
+
+
 	// Merge tourism and tourism pictures with the tourism response struct on the same tourism id
 	tourismResponse.ID = tourism.ID
 	tourismResponse.Title = tourism.Title
@@ -98,7 +106,9 @@ func (tc *TourismController) GetOne(ctx *gin.Context) {
 	tourismResponse.Description = tourism.Description
 	tourismResponse.Latitude = tourism.Latitude
 	tourismResponse.Longitude = tourism.Longitude
+	tourismResponse.Visitor = tourism.Visitor
 	tourismResponse.CoverPictureUrl = tourism.CoverPictureUrl
+
 	tourismResponse.Pictures = []models.TourismPictureResponse{}
 
 	for _, tourismPicture := range tourismPictures {

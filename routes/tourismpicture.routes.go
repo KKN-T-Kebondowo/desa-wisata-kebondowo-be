@@ -2,6 +2,7 @@ package routes
 
 import (
 	"kebondowo/controllers"
+	"kebondowo/middleware"
 
 	"github.com/gin-gonic/gin"
 )
@@ -18,8 +19,8 @@ func (tpc *TourismPictureRouteController) TourismPictureRoute(rg *gin.RouterGrou
 	router := rg.Group("/tourism-pictures")
 	router.GET("/", tpc.tourismPictureController.GetAll)
 	router.GET("/:id", tpc.tourismPictureController.GetOne)
-	router.POST("/", tpc.tourismPictureController.Create)
-	router.DELETE("/:id", tpc.tourismPictureController.Delete)
+	router.POST("/", middleware.DeserializeUser(),tpc.tourismPictureController.Create)
+	router.DELETE("/:id", middleware.DeserializeUser(),tpc.tourismPictureController.Delete)
 }
 
 

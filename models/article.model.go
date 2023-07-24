@@ -11,6 +11,7 @@ type Article struct {
 	Author     string    `gorm:"column:author;type:varchar(255);not null" json:"author"`
 	Content    string    `gorm:"column:content;type:varchar(255);not null" json:"content"`
 	PictureUrl string    `gorm:"column:picture_url;type:varchar(255);not null" json:"picture_url"`
+	Visitor    uint32    `gorm:"column:visitor;not null;default:0" json:"visitor"`
 	CreatedAt  time.Time `gorm:"column:created_at;not null" json:"created_at"`
 	UpdatedAt  time.Time `gorm:"column:updated_at;not null" json:"updated_at"`
 }
@@ -38,6 +39,7 @@ type ArticleResponse struct {
 	Author     string    `json:"author,omitempty"`
 	Content    string    `json:"content,omitempty"`
 	PictureUrl string    `json:"picture_url,omitempty"`
+	Visitor    uint32    `json:"visitor,omitempty"`
 	CreatedAt  time.Time `json:"created_at,omitempty"`
 	UpdatedAt  time.Time `json:"updated_at,omitempty"`
 }

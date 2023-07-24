@@ -85,6 +85,10 @@ func (ac *ArticleController) GetOne(ctx *gin.Context) {
 		return
 	}
 
+	// Increment the visitor count
+	article.Visitor++
+	ac.DB.Save(&article)
+
 	ctx.JSON(http.StatusOK, gin.H{"article": article})
 }
 
