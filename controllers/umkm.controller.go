@@ -117,7 +117,7 @@ func (uc *UMKMController) GetOne(ctx *gin.Context) {
 				ID:         umkmPicture.ID,
 				UMKMID:     umkmPicture.UMKMID,
 				PictureUrl: umkmPicture.PictureUrl,
-				Caption:   umkmPicture.Caption,
+				Caption:    umkmPicture.Caption,
 			})
 		}
 	}
@@ -142,23 +142,20 @@ func (uc *UMKMController) Create(ctx *gin.Context) {
 	} else {
 		slug = payload.Slug
 	}
-		
-	
 
 	payload.Slug = slug
 
-
 	newUMKM := models.UMKM{
-		Title: 		 payload.Title,
-		Slug:        payload.Slug,
-		Description: payload.Description,
-		Latitude:    payload.Latitude,
-		Longitude:   payload.Longitude,
+		Title:           payload.Title,
+		Slug:            payload.Slug,
+		Description:     payload.Description,
+		Latitude:        payload.Latitude,
+		Longitude:       payload.Longitude,
 		CoverPictureUrl: payload.CoverPictureUrl,
-		Contact: payload.Contact,
-		ContactName: payload.ContactName,
-		CreatedAt:   time.Now(),
-		UpdatedAt:   time.Now(),
+		Contact:         payload.Contact,
+		ContactName:     payload.ContactName,
+		CreatedAt:       time.Now(),
+		UpdatedAt:       time.Now(),
 	}
 
 	result := uc.DB.Create(&newUMKM)
@@ -172,7 +169,7 @@ func (uc *UMKMController) Create(ctx *gin.Context) {
 	if payload.Pictures != nil {
 		for _, picture := range payload.Pictures {
 			newUMKMPicture := models.UMKMPicture{
-				UMKMID:      newUMKM.ID,
+				UMKMID:     newUMKM.ID,
 				PictureUrl: picture.PictureUrl,
 			}
 
@@ -186,23 +183,22 @@ func (uc *UMKMController) Create(ctx *gin.Context) {
 	}
 
 	response := &models.UMKMResponse{
-		ID:          newUMKM.ID,
-		Title:       newUMKM.Title,
-		Slug:        newUMKM.Slug,
-		Description: newUMKM.Description,
-		Latitude:    newUMKM.Latitude,
-		Longitude:   newUMKM.Longitude,
-		Contact:  newUMKM.Contact,
-		ContactName:  newUMKM.ContactName,
+		ID:              newUMKM.ID,
+		Title:           newUMKM.Title,
+		Slug:            newUMKM.Slug,
+		Description:     newUMKM.Description,
+		Latitude:        newUMKM.Latitude,
+		Longitude:       newUMKM.Longitude,
+		Contact:         newUMKM.Contact,
+		ContactName:     newUMKM.ContactName,
 		CoverPictureUrl: newUMKM.CoverPictureUrl,
-		CreatedAt:   newUMKM.CreatedAt,
-		UpdatedAt:   newUMKM.UpdatedAt,
-		Pictures:   []models.UMKMPictureResponse{},
+		CreatedAt:       newUMKM.CreatedAt,
+		UpdatedAt:       newUMKM.UpdatedAt,
+		Pictures:        []models.UMKMPictureResponse{},
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"umkm": response})
 }
-
 
 func (uc *UMKMController) Update(ctx *gin.Context) {
 	var payload *models.UMKMUpdate
@@ -237,16 +233,16 @@ func (uc *UMKMController) Update(ctx *gin.Context) {
 	}
 
 	response := &models.UMKMResponse{
-		ID:          umkm.ID,
-		Title:       umkm.Title,
-		Slug:        umkm.Slug,
-		Description: umkm.Description,
-		Latitude:    umkm.Latitude,
-		Longitude:   umkm.Longitude,
+		ID:              umkm.ID,
+		Title:           umkm.Title,
+		Slug:            umkm.Slug,
+		Description:     umkm.Description,
+		Latitude:        umkm.Latitude,
+		Longitude:       umkm.Longitude,
 		CoverPictureUrl: umkm.CoverPictureUrl,
-		CreatedAt:   umkm.CreatedAt,
-		UpdatedAt:   umkm.UpdatedAt,
-		Pictures:   []models.UMKMPictureResponse{},
+		CreatedAt:       umkm.CreatedAt,
+		UpdatedAt:       umkm.UpdatedAt,
+		Pictures:        []models.UMKMPictureResponse{},
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"umkm": response})
@@ -255,7 +251,7 @@ func (uc *UMKMController) Update(ctx *gin.Context) {
 func (uc *UMKMController) Delete(ctx *gin.Context) {
 	var umkm models.UMKM
 
-	result := uc.DB.Where("slug = ?", ctx.Param("slug")).First(&umkm)
+	result := uc.DB.Where("id = ?", ctx.Param("id")).First(&umkm)
 
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
@@ -265,7 +261,7 @@ func (uc *UMKMController) Delete(ctx *gin.Context) {
 	uc.DB.Delete(&umkm)
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "UMKM deleted"})
-	
+
 	result2 := uc.DB.Where("id = ?", ctx.Param("id")).First(&umkm)
 
 	if result2.Error != nil {
@@ -277,8 +273,4 @@ func (uc *UMKMController) Delete(ctx *gin.Context) {
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "UMKM deleted"})
 
-
 }
-
-
-

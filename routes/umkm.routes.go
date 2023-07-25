@@ -16,7 +16,7 @@ func NewUMKMRouteController(umkmController controllers.UMKMController) UMKMRoute
 }
 
 func (uc *UMKMRouteController) UMKMRoute(rg *gin.RouterGroup) {
-	
+
 	router := rg.Group("umkms")
 	router.GET("/", uc.umkmController.GetAll)
 	router.GET("/:slug", uc.umkmController.GetOne)
@@ -24,4 +24,3 @@ func (uc *UMKMRouteController) UMKMRoute(rg *gin.RouterGroup) {
 	router.PUT("/:id", middleware.DeserializeUser(), uc.umkmController.Update)
 	router.DELETE("/:id", middleware.DeserializeUser(), uc.umkmController.Delete)
 }
-
