@@ -30,6 +30,10 @@ var (
 	TourismPictureRouteController routes.TourismPictureRouteController
 	DashboardController	controllers.DashboardController
 	DashboardRouteController routes.DashboardRouteController
+	UMKMController controllers.UMKMController
+	UMKMRouteController routes.UMKMRouteController
+	UMKMPictureController controllers.UMKMPictureController
+	UMKMPictureRouteController routes.UMKMPictureRouteController
 )
 
 func init() {
@@ -64,6 +68,12 @@ func init() {
 	DashboardController = controllers.NewDashboardController(initializers.DB)
 	DashboardRouteController = routes.NewDashboardRouteController(DashboardController)
 
+	UMKMController = controllers.NewUMKMController(initializers.DB)
+	UMKMRouteController = routes.NewUMKMRouteController(UMKMController)
+
+	UMKMPictureController = controllers.NewUMKMPictureController(initializers.DB)
+	UMKMPictureRouteController = routes.NewUMKMPictureRouteController(UMKMPictureController)
+	
 	server = gin.Default()
 }
 
@@ -100,6 +110,8 @@ func main() {
 	ArticleRouteController.ArticleRoute(router)
 	TourismPictureRouteController.TourismPictureRoute(router)
 	DashboardRouteController.DashboardRoute(router)
+	UMKMRouteController.UMKMRoute(router)
+	UMKMPictureRouteController.UMKMPictureRoute(router)
 
 	log.Fatal(server.Run(":" + config.ServerPort))
 }
