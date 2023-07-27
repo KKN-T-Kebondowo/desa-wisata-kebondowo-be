@@ -115,6 +115,29 @@ func (dc *DashboardController) GetDashboard(ctx *gin.Context) {
 		galleryPerMonth[data.Month-1] = data.Count
 	}
 
+	// fetch umkm data
+	var umkmData []MonthData
+	dc.DB.Raw(`
+		SELECT
+			EXTRACT(MONTH FROM created_at) as month,
+			COUNT(*) as count
+		FROM
+			umkms
+		WHERE
+			created_at >= ? AND created_at < ?
+		GROUP BY
+			EXTRACT(MONTH FROM created_at)
+		ORDER BY
+			EXTRACT(MONTH FROM created_at)
+	`, oneYearAgo, now).Scan(&umkmData)
+
+	umkmPerMonth := make([]int64, 12)
+	for _, data := range umkmData {
+		// Since the month ranges from 1 to 12, we need to subtract 1 to get the correct index in the array.
+		umkmPerMonth[data.Month-1] = data.Count
+	}
+
+
 	// Fetch tourism data
 	var tourismData []MonthData
 	dc.DB.Raw(`
@@ -141,6 +164,7 @@ func (dc *DashboardController) GetDashboard(ctx *gin.Context) {
 	articlePerMonth = circularShift(articlePerMonth, currentMonth)
 	galleryPerMonth = circularShift(galleryPerMonth, currentMonth)
 	tourismPerMonth = circularShift(tourismPerMonth, currentMonth)
+	umkmPerMonth = circularShift(umkmPerMonth, currentMonth)
 
 	dashboardResponse := &models.DashboardResponse{
 		TotalArticle:    totalArticle,
@@ -149,6 +173,7 @@ func (dc *DashboardController) GetDashboard(ctx *gin.Context) {
 		TotalVisitor:    totalVisitor,
 		TotalUMKM:       totalUMKM,
 		ArticlePerMonth: articlePerMonth,
+		UMKMPerMonth: umkmPerMonth,
 		GalleryPerMonth: galleryPerMonth,
 		TourismPerMonth: tourismPerMonth,
 	}

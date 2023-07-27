@@ -9,4 +9,5 @@ type DashboardResponse struct {
 	ArticlePerMonth []int64 `json:"article_per_month,omitempty"`
 	GalleryPerMonth []int64 `json:"gallery_per_month,omitempty"`
 	TourismPerMonth []int64 `json:"tourism_per_month,omitempty"`
+	UMKMPerMonth    []int64 `json:"umkm_per_month,omitempty"`
 }
