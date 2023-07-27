@@ -9,7 +9,7 @@ type UMKM struct {
 	Title           string    `gorm:"column:title;type:varchar(255);not null"`
 	Slug            string    `gorm:"column:slug;type:varchar(255);not null"`
 	CoverPictureUrl string    `gorm:"column:cover_picture_url;type:varchar(255);not null"`
-	Description     string    `gorm:"column:description;type:varchar(255);not null"`
+	Description     string    `gorm:"column:description;type:text;not null"`
 	Latitude        float64   `gorm:"column:latitude;type:float;not null"`
 	Longitude       float64   `gorm:"column:longitude;type:float;not null"`
 	Visitor         uint32    `gorm:"column:visitor;not null;default:0"`

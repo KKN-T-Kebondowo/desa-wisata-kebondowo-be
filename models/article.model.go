@@ -9,7 +9,7 @@ type Article struct {
 	Title      string    `gorm:"column:title;type:varchar(255);not null" json:"title"`
 	Slug       string    `gorm:"column:slug;type:varchar(255);not null" json:"slug"`
 	Author     string    `gorm:"column:author;type:varchar(255);not null" json:"author"`
-	Content    string    `gorm:"column:content;type:varchar(255);not null" json:"content"`
+	Content    string    `gorm:"column:content;type:text;not null" json:"content"`
 	PictureUrl string    `gorm:"column:picture_url;type:varchar(255);not null" json:"picture_url"`
 	Visitor    uint32    `gorm:"column:visitor;not null;default:0" json:"visitor"`
 	CreatedAt  time.Time `gorm:"column:created_at;not null" json:"created_at"`

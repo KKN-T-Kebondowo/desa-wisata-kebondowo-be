@@ -36,6 +36,9 @@ func (dc *DashboardController) GetDashboard(ctx *gin.Context) {
 	var totalGallery int64
 	dc.DB.Model(&models.Gallery{}).Count(&totalGallery)
 
+	var totalUMKM int64
+	dc.DB.Model(&models.UMKM{}).Count(&totalUMKM)
+
 	// get total tourism
 	var totalTourism int64
 	dc.DB.Model(&models.Tourism{}).Count(&totalTourism)
@@ -144,6 +147,7 @@ func (dc *DashboardController) GetDashboard(ctx *gin.Context) {
 		TotalGallery:    totalGallery,
 		TotalTourism:    totalTourism,
 		TotalVisitor:    totalVisitor,
+		TotalUMKM:       totalUMKM,
 		ArticlePerMonth: articlePerMonth,
 		GalleryPerMonth: galleryPerMonth,
 		TourismPerMonth: tourismPerMonth,
