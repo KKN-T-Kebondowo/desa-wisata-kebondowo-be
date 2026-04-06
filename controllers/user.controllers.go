@@ -18,12 +18,21 @@ func NewUserController(DB *gorm.DB) UserController {
 }
 
 func (uc *UserController) GetMe(ctx *gin.Context) {
-	currentUser := ctx.MustGet("currentUser").(models.User)
+	val, exists := ctx.Get("currentUser")
+	if !exists {
+		ctx.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "user not found in context"})
+		return
+	}
+	currentUser, ok := val.(models.User)
+	if !ok {
+		ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"message": "invalid user context"})
+		return
+	}
 
 	userResponse := &models.UserResponse{
 		ID:        currentUser.ID,
-		Username:      currentUser.Username,
-		RoleID:      currentUser.RoleID,
+		Username:  currentUser.Username,
+		RoleID:    currentUser.RoleID,
 		CreatedAt: currentUser.CreatedAt,
 		UpdatedAt: currentUser.UpdatedAt,
 	}

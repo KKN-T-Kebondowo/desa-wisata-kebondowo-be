@@ -88,7 +88,7 @@ func (uc *UMKMController) GetOne(ctx *gin.Context) {
 	}
 
 	umkm.Visitor++
-	uc.DB.Model(&umkm).UpdateColumn("visitor", umkm.Visitor)
+	uc.DB.Model(&umkm).UpdateColumn("visitor", gorm.Expr("visitor + 1"))
 
 	// get umkm pictures
 	result2 := uc.DB.Where("umkm_id = ?", umkm.ID).Find(&umkmPictures)
@@ -252,25 +252,21 @@ func (uc *UMKMController) Delete(ctx *gin.Context) {
 	var umkm models.UMKM
 
 	result := uc.DB.Where("id = ?", ctx.Param("id")).First(&umkm)
-
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
 		return
 	}
 
-	uc.DB.Delete(&umkm)
-
-	ctx.JSON(http.StatusOK, gin.H{"message": "UMKM deleted"})
-
-	result2 := uc.DB.Where("id = ?", ctx.Param("id")).First(&umkm)
-
-	if result2.Error != nil {
-		ctx.JSON(http.StatusBadGateway, gin.H{"message": result2.Error.Error()})
+	// Delete associated UMKM pictures first
+	if err := uc.DB.Where("umkm_id = ?", umkm.ID).Delete(&models.UMKMPicture{}).Error; err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
 		return
 	}
 
-	uc.DB.Delete(&umkm)
+	if err := uc.DB.Delete(&umkm).Error; err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
+		return
+	}
 
 	ctx.JSON(http.StatusOK, gin.H{"message": "UMKM deleted"})
-
 }

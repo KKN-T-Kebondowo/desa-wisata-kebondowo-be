@@ -11,14 +11,27 @@
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
 
-# Dependency directories (remove the comment below to include it)
+# Dependency directories
 # vendor/
+
+# IDE and editor files
 .DS_Store
+.idea/
+.vscode/
+
+# Project-specific
 TODO.md
 logs.txt
-.idea/
 .dockerignore
 fly.toml
-```
 
+# Environment variables
 .env
+
+# Node (not part of Go project)
+node_modules/
+package.json
+package-lock.json
+
+# OpenCode
+.opencode/

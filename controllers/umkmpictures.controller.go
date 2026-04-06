@@ -99,9 +99,13 @@ func (upc *UMKMPictureController) Delete(ctx *gin.Context) {
 	var umkmPicture models.UMKMPicture
 
 	result := upc.DB.Where("id = ?", ctx.Param("id")).First(&umkmPicture)
-
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
+		return
+	}
+
+	if err := upc.DB.Delete(&umkmPicture).Error; err != nil {
+		ctx.JSON(http.StatusBadGateway, gin.H{"message": err.Error()})
 		return
 	}
 

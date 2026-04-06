@@ -12,89 +12,46 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-var (
-	server                 *gin.Engine
-	AuthController         controllers.AuthController
-	AuthRouteController    routes.AuthRouteController
-	UserController         controllers.UserController
-	UserRouteController    routes.UserRouteController
-	RoleController         controllers.RoleController
-	RoleRouteController    routes.RoleRouteController
-	TourismController      controllers.TourismController
-	TourismRouteController routes.TourismRouteController
-	GalleryController      controllers.GalleryController
-	GalleryRouteController routes.GalleryRouteController
-	ArticleController      controllers.ArticleController
-	ArticleRouteController routes.ArticleRouteController
-	TourismPictureController	  controllers.TourismPictureController
-	TourismPictureRouteController routes.TourismPictureRouteController
-	DashboardController	controllers.DashboardController
-	DashboardRouteController routes.DashboardRouteController
-	UMKMController controllers.UMKMController
-	UMKMRouteController routes.UMKMRouteController
-	UMKMPictureController controllers.UMKMPictureController
-	UMKMPictureRouteController routes.UMKMPictureRouteController
-)
-
-func init() {
+func main() {
 	config, err := initializers.LoadConfig(".")
 	if err != nil {
-		log.Fatal("? Could not load environment variables", err)
+		log.Fatal("Could not load environment variables: ", err)
 	}
 
 	initializers.ConnectDB(&config)
 
-	AuthController = controllers.NewAuthController(initializers.DB)
-	AuthRouteController = routes.NewAuthRouteController(AuthController)
+	// Initialize controllers
+	authController := controllers.NewAuthController(initializers.DB)
+	userController := controllers.NewUserController(initializers.DB)
+	roleController := controllers.NewRoleController(initializers.DB)
+	tourismController := controllers.NewTourismController(initializers.DB)
+	galleryController := controllers.NewGalleryController(initializers.DB)
+	articleController := controllers.NewArticleController(initializers.DB)
+	tourismPictureController := controllers.NewTourismPictureController(initializers.DB)
+	dashboardController := controllers.NewDashboardController(initializers.DB)
+	umkmController := controllers.NewUMKMController(initializers.DB)
+	umkmPictureController := controllers.NewUMKMPictureController(initializers.DB)
 
-	UserController = controllers.NewUserController(initializers.DB)
-	UserRouteController = routes.NewRouteUserController(UserController)
+	// Initialize route controllers
+	authRouteController := routes.NewAuthRouteController(authController)
+	userRouteController := routes.NewRouteUserController(userController)
+	roleRouteController := routes.NewRoleRouteController(roleController)
+	tourismRouteController := routes.NewTourismRouteController(tourismController)
+	galleryRouteController := routes.NewGalleryRouteController(galleryController)
+	articleRouteController := routes.NewArticleRouteController(articleController)
+	tourismPictureRouteController := routes.NewTourismPictureRouteController(tourismPictureController)
+	dashboardRouteController := routes.NewDashboardRouteController(dashboardController)
+	umkmRouteController := routes.NewUMKMRouteController(umkmController)
+	umkmPictureRouteController := routes.NewUMKMPictureRouteController(umkmPictureController)
 
-	RoleController = controllers.NewRoleController(initializers.DB)
-	RoleRouteController = routes.NewRoleRouteController(RoleController)
-
-	TourismController = controllers.NewTourismController(initializers.DB)
-	TourismRouteController = routes.NewTourismRouteController(TourismController)
-
-	GalleryController = controllers.NewGalleryController(initializers.DB)
-	GalleryRouteController = routes.NewGalleryRouteController(GalleryController)
-
-	ArticleController = controllers.NewArticleController(initializers.DB)
-	ArticleRouteController = routes.NewArticleRouteController(ArticleController)
-
-	TourismPictureController = controllers.NewTourismPictureController(initializers.DB)
-	TourismPictureRouteController = routes.NewTourismPictureRouteController(TourismPictureController)
-
-	DashboardController = controllers.NewDashboardController(initializers.DB)
-	DashboardRouteController = routes.NewDashboardRouteController(DashboardController)
-
-	UMKMController = controllers.NewUMKMController(initializers.DB)
-	UMKMRouteController = routes.NewUMKMRouteController(UMKMController)
-
-	UMKMPictureController = controllers.NewUMKMPictureController(initializers.DB)
-	UMKMPictureRouteController = routes.NewUMKMPictureRouteController(UMKMPictureController)
-	
-	server = gin.Default()
-}
-
-func main() {
-	config, err := initializers.LoadConfig(".")
-	if err != nil {
-		log.Fatal("? Could not load environment variables", err)
-	}
+	// Setup server
+	server := gin.Default()
 
 	corsConfig := cors.DefaultConfig()
 	corsConfig.AllowOrigins = []string{"http://localhost:3000", "https://dashboard-desa-wisata-kebondowo.vercel.app", "https://desa-wisata-kebondowo-dashboard.vercel.app", "https://dashboard.kebondowo.com"}
 	corsConfig.AllowCredentials = true
-	corsConfig.AllowHeaders = []string{"Authorization", "Content-Type"} // Add "Content-Type" to allowed headers
-
-	server := gin.Default()
+	corsConfig.AllowHeaders = []string{"Authorization", "Content-Type"}
 	server.Use(cors.New(corsConfig))
-
-	// server := gin.Default()
-
-	// Enable CORS
-	// server.Use(CORS())
 
 	router := server.Group("/api")
 	router.GET("/healthchecker", func(ctx *gin.Context) {
@@ -102,33 +59,16 @@ func main() {
 		ctx.JSON(http.StatusOK, gin.H{"status": "success", "message": message})
 	})
 
-	AuthRouteController.AuthRoute(router)
-	UserRouteController.UserRoute(router)
-	RoleRouteController.RoleRoute(router)
-	TourismRouteController.TourismRoute(router)
-	GalleryRouteController.GalleryRoute(router)
-	ArticleRouteController.ArticleRoute(router)
-	TourismPictureRouteController.TourismPictureRoute(router)
-	DashboardRouteController.DashboardRoute(router)
-	UMKMRouteController.UMKMRoute(router)
-	UMKMPictureRouteController.UMKMPictureRoute(router)
+	authRouteController.AuthRoute(router)
+	userRouteController.UserRoute(router)
+	roleRouteController.RoleRoute(router)
+	tourismRouteController.TourismRoute(router)
+	galleryRouteController.GalleryRoute(router)
+	articleRouteController.ArticleRoute(router)
+	tourismPictureRouteController.TourismPictureRoute(router)
+	dashboardRouteController.DashboardRoute(router)
+	umkmRouteController.UMKMRoute(router)
+	umkmPictureRouteController.UMKMPictureRoute(router)
 
 	log.Fatal(server.Run(":" + config.ServerPort))
 }
-
-// CORS middleware
-// func CORS() gin.HandlerFunc {
-// 	return func(c *gin.Context) {
-// 		c.Writer.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
-// 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-// 		c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
-// 		c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT, DELETE")
-
-// 		if c.Request.Method == "OPTIONS" {
-// 			c.AbortWithStatus(http.StatusNoContent)
-// 			return
-// 		}
-
-// 		c.Next()
-// 	}
-// }

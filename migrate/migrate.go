@@ -17,15 +17,22 @@ func init() {
 }
 
 func main() {
+	migrationModels := []interface{}{
+		&models.Role{},
+		&models.User{},
+		&models.Tourism{},
+		&models.TourismPicture{},
+		&models.Gallery{},
+		&models.Article{},
+		&models.UMKM{},
+		&models.UMKMPicture{},
+	}
 
-	initializers.DB.AutoMigrate(&models.Role{})
-	initializers.DB.AutoMigrate(&models.User{})
-	initializers.DB.AutoMigrate(&models.Tourism{})
-	initializers.DB.AutoMigrate(&models.TourismPicture{})
-	initializers.DB.AutoMigrate(&models.Gallery{})
-	initializers.DB.AutoMigrate(&models.Article{})
-	initializers.DB.AutoMigrate(&models.UMKM{})
-	initializers.DB.AutoMigrate(&models.UMKMPicture{})
+	for _, model := range migrationModels {
+		if err := initializers.DB.AutoMigrate(model); err != nil {
+			log.Fatalf("failed to migrate %T: %v", model, err)
+		}
+	}
 
-	fmt.Println("? Migration complete")
+	fmt.Println("Migration complete")
 }

@@ -85,9 +85,9 @@ func (tc *TourismController) GetOne(ctx *gin.Context) {
 		return
 	}
 
-	// Increment the visitor count
+	// Increment the visitor count atomically
+	tc.DB.Model(&tourism).UpdateColumn("visitor", gorm.Expr("visitor + 1"))
 	tourism.Visitor++
-	tc.DB.Model(&tourism).UpdateColumn("visitor", tourism.Visitor)
 
 	// article.Visitor++
 	// ac.DB.Model(&article).UpdateColumn("visitor", article.Visitor)
@@ -255,22 +255,19 @@ func (tc *TourismController) Delete(ctx *gin.Context) {
 	var tourismpicture models.TourismPicture
 
 	result := tc.DB.Where("tourism_id = ?", ctx.Param("id")).Delete(&tourismpicture)
-
 	if result.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
 		return
 	}
 
-	result2 := tc.DB.Where("id = ?", ctx.Param("id")).First(&tourism)
-
-	if result2.Error != nil {
+	result = tc.DB.Where("id = ?", ctx.Param("id")).First(&tourism)
+	if result.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
 		return
 	}
 
-	result2 = tc.DB.Delete(&tourism)
-
-	if result2.Error != nil {
+	result = tc.DB.Delete(&tourism)
+	if result.Error != nil {
 		ctx.JSON(http.StatusBadGateway, gin.H{"message": result.Error.Error()})
 		return
 	}

@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"kebondowo/models"
@@ -26,20 +27,29 @@ func (gc *GalleryController) GetAll(ctx *gin.Context) {
 	limitStr := ctx.DefaultQuery("limit", "20")
 	offsetStr := ctx.DefaultQuery("offset", "0")
 	sortby := ctx.DefaultQuery("sortby", "created_at")
-	orderedby := ctx.DefaultQuery("orderedby", "desc")
+	orderedby := strings.ToLower(ctx.DefaultQuery("orderedby", "desc"))
+
+	// Whitelist allowed sort fields and order directions to prevent SQL injection
+	allowedSortFields := map[string]bool{"created_at": true, "updated_at": true, "id": true}
+	allowedOrders := map[string]bool{"asc": true, "desc": true}
+
+	if !allowedSortFields[sortby] {
+		sortby = "created_at"
+	}
+	if !allowedOrders[orderedby] {
+		orderedby = "desc"
+	}
 
 	// Convert limit and offset to integers
 	limit, err := strconv.Atoi(limitStr)
 	if err != nil {
-		// Handle error, invalid limit value
-		ctx.JSON(http.StatusBadRequest, gin.H{"message": "Invalid limit value"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "invalid limit value"})
 		return
 	}
 
 	offset, err := strconv.Atoi(offsetStr)
 	if err != nil {
-		// Handle error, invalid offset value
-		ctx.JSON(http.StatusBadRequest, gin.H{ "message": "Invalid offset value"})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": "invalid offset value"})
 		return
 	}
 
