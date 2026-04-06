@@ -87,22 +87,26 @@ func (ac *AuthController) SignInUser(ctx *gin.Context) {
 		return
 	}
 
-	config, _ := initializers.LoadConfig(".")
+	config, err := initializers.LoadConfig(".")
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "internal server error"})
+		return
+	}
 
 	// Generate Tokens
-	access_token, err := utils.CreateToken(config.AccessTokenExpiresIn, user.ID, user.Username, user.RoleID, config.AccessTokenPrivateKey)
+	accessToken, err := utils.CreateToken(config.AccessTokenExpiresIn, user.ID, user.Username, user.RoleID, config.AccessTokenPrivateKey)
 	if err != nil {
 		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
-	refresh_token, err := utils.CreateToken(config.RefreshTokenExpiresIn, user.ID, user.Username, user.RoleID, config.RefreshTokenPrivateKey)
+	refreshToken, err := utils.CreateToken(config.RefreshTokenExpiresIn, user.ID, user.Username, user.RoleID, config.RefreshTokenPrivateKey)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{ "message": err.Error()})
+		ctx.JSON(http.StatusBadRequest, gin.H{"message": err.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"access_token": access_token, "refresh_token": refresh_token})
+	ctx.JSON(http.StatusOK, gin.H{"access_token": accessToken, "refresh_token": refreshToken})
 }
 
 // [...] Refresh Access Token
@@ -116,11 +120,15 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 		return
 	}
 
-	config, _ := initializers.LoadConfig(".")
+	config, err := initializers.LoadConfig(".")
+	if err != nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{"message": "internal server error"})
+		return
+	}
 
 	sub, err := utils.ValidateToken(payload.RefreshToken, config.RefreshTokenPublicKey)
 	if err != nil {
-		ctx.JSON(http.StatusForbidden, gin.H{ "message": err.Error()})
+		ctx.JSON(http.StatusForbidden, gin.H{"message": err.Error()})
 		return
 	}
 
@@ -131,20 +139,21 @@ func (ac *AuthController) RefreshAccessToken(ctx *gin.Context) {
 		return
 	}
 
-	access_token, err := utils.CreateToken(config.AccessTokenExpiresIn, user.ID, user.Username, user.RoleID, config.AccessTokenPrivateKey)
+	accessToken, err := utils.CreateToken(config.AccessTokenExpiresIn, user.ID, user.Username, user.RoleID, config.AccessTokenPrivateKey)
 	if err != nil {
-		ctx.JSON(http.StatusForbidden, gin.H{ "message": err.Error()})
+		ctx.JSON(http.StatusForbidden, gin.H{"message": err.Error()})
 		return
 	}
 
-	ctx.JSON(http.StatusOK, gin.H{"access_token": access_token})
+	ctx.JSON(http.StatusOK, gin.H{"access_token": accessToken})
 }
 
 // [...] Logout user
 func (ac *AuthController) LogoutUser(ctx *gin.Context) {
-	ctx.SetCookie("access_token", "", -1, "/", "localhost", false, true)
-	ctx.SetCookie("refresh_token", "", -1, "/", "localhost", false, true)
-	ctx.SetCookie("logged_in", "", -1, "/", "localhost", false, false)
+	domain := ctx.Request.Host
+	ctx.SetCookie("access_token", "", -1, "/", domain, false, true)
+	ctx.SetCookie("refresh_token", "", -1, "/", domain, false, true)
+	ctx.SetCookie("logged_in", "", -1, "/", domain, false, false)
 
 	ctx.JSON(http.StatusOK, gin.H{"status": "success"})
 }
